@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>마이페이지</h2>
+<div class="card">
+    <h3>🪪 나의 정보</h3>
+    <p>이름: <strong>{{ user.name }}</strong></p>
+    <p>등급: <strong>{{ user.grade }}</strong></p>
+    <p>주민번호: {{ user.resident_id }}</p>
+    <p>전화번호: {{ user.phone }}</p>
+    <p>보유 자산: <strong>{{ user.assets }} {{ config_currency_name }}</strong></p>
+    <p>신용 점수: {{ user.credit_score }}</p>
+</div>
+
+<div class="card">
+    <h3>💳 주민등록증</h3>
+    <img src="{{ url_for('static', filename=id_card_url) }}" style="width:100%; border-radius:10px; border:1px solid #ddd">
+    <a href="{{ url_for('static', filename=id_card_url) }}" download class="btn" style="margin-top:10px">이미지 다운로드</a>
+</div>
+
+<div class="card">
+    <h3>📜 전과 기록</h3>
+    <p>기록이 없습니다.</p>
+</div>
+{% endblock %}

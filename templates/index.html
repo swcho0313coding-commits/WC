@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>환영합니다, {{ user.name }}님!</h2>
+    <p>현재 등급: <strong>{{ user.grade }}</strong></p>
+    <p>보유 자산: <strong>{{ user.assets }} {{ config_currency_name }}</strong></p>
+</div>
+
+<div class="card">
+    <h3>📢 최근 공지</h3>
+    <p>아직 새로운 공지가 없습니다.</p>
+</div>
+
+<div class="card">
+    <h3>⚖️ 주요 국정 소식</h3>
+    <p>평화로운 하루입니다.</p>
+</div>
+
+<div class="card">
+    <h3>🏦 금융 서비스</h3>
+    <a href="{{ url_for('bank.index') }}" class="btn">은행 서비스 이용하기</a>
+</div>
+{% endblock %}

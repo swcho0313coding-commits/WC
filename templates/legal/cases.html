@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>사건 기록</h2>
+<div class="card">
+    {% for case in cases %}
+    <div style="border-bottom:1px solid #eee; padding:10px 0">
+        <strong>고발인: {{ case.reporter }}</strong> -> <strong>피고발인: {{ case.target }}</strong>
+        <p>사유: {{ case.reason }}</p>
+        <p>상태: <span style="color:blue">{{ case.status }}</span></p>
+        <a href="{{ url_for('legal.view_case', case_id=case.id) }}" class="btn btn-secondary" style="width:auto">상세보기</a>
+        {% if case.status == 'pending' and (session.user.grade == '사법 1등급' or session.user.grade == '관리자') %}
+        <a href="{{ url_for('legal.approve_case', case_id=case.id) }}" class="btn" style="width:auto">사건 승인 (재판 개시)</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

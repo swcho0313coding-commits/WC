@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>사건 상세 조회</h2>
+    <p><strong>고발인:</strong> {{ case.reporter }}</p>
+    <p><strong>피고발인:</strong> {{ case.target }}</p>
+    <p><strong>적용 법규:</strong> {{ law.name if law else '없음' }}</p>
+    <p><strong>사유:</strong> {{ case.reason }}</p>
+    <p><strong>상태:</strong> {{ case.status }}</p>
+</div>
+
+{% if case.status == 'trial_ongoing' and session.user.grade in ['사법 1등급', '관리자'] %}
+<div class="card">
+    <h3>⚖️ 판결 내리기</h3>
+    <form action="{{ url_for('legal.verdict', case_id=case.id) }}" method="POST">
+        <label>결과</label>
+        <select name="result">
+            <option value="guilty">유죄</option>
+            <option value="innocent">무죄</option>
+        </select>
+        <label>벌금액 (크레딧)</label>
+        <input type="number" name="fine" value="0">
+        <button type="submit" class="btn">판결 확정</button>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

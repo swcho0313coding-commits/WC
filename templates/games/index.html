@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>뉴 에덴 오락실</h2>
+
+<div class="card">
+    <h3>✊ 가위바위보</h3>
+    <p>컴퓨터를 이기고 베팅액의 2배를 획득하세요!</p>
+    <a href="{{ url_for('games.rps') }}" class="btn">입장하기</a>
+</div>
+
+<div class="card">
+    <h3>🎰 슬롯머신</h3>
+    <p>잭팟을 노려보세요!</p>
+    <a href="{{ url_for('games.slots') }}" class="btn">입장하기</a>
+</div>
+
+<div class="card">
+    <h3>🃏 블랙잭</h3>
+    <p>딜러를 이기고 2배의 수익을!</p>
+    <a href="{{ url_for('games.blackjack') }}" class="btn">입장하기</a>
+</div>
+
+<div class="card">
+    <h3>📈 하이로우</h3>
+    <p>다음 카드가 높을지 낮을지 맞혀보세요!</p>
+    <a href="{{ url_for('games.hilo') }}" class="btn">입장하기</a>
+</div>
+
+<div class="card">
+    <h3>💎 가챠</h3>
+    <p>운을 시험해보세요!</p>
+    <a href="{{ url_for('games.gacha') }}" class="btn">입장하기</a>
+</div>
+
+<div class="card">
+    <h3>🎡 룰렛</h3>
+    <p>숫자와 색상에 베팅하세요!</p>
+    <a href="{{ url_for('games.roulette') }}" class="btn">입장하기</a>
+</div>
+
+<div class="card">
+    <h3>🎫 국가 복권</h3>
+    <p>매주 추첨하는 국가 공식 복권!</p>
+    <a href="{{ url_for('games.lottery') }}" class="btn">구매하기</a>
+</div>
+{% endblock %}

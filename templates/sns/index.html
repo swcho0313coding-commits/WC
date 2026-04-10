@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .sns-post {
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .post-header {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+    }
+    .post-image img {
+        width: 100%;
+        display: block;
+    }
+    .post-content {
+        padding: 10px;
+    }
+    .post-actions {
+        padding: 10px;
+        border-top: 1px solid #eee;
+    }
+    .post-comments {
+        padding: 10px;
+        background: #fafafa;
+        font-size: 0.9rem;
+    }
+    .comment-item {
+        margin-bottom: 5px;
+    }
+    .comment-author {
+        font-weight: bold;
+    }
+    .create-post-btn {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        text-decoration: none;
+        z-index: 999;
+    }
+    #postModal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>뉴 에덴 소셜 네트워크</h2>
+
+<a href="#" class="create-post-btn" onclick="document.getElementById('postModal').style.display='flex'">+</a>
+
+<div id="postModal">
+    <div class="card" style="width: 90%; max-width: 400px;">
+        <h3>새 게시물 작성</h3>
+        <form action="{{ url_for('sns.create_post') }}" method="POST" enctype="multipart/form-data">
+            <textarea name="content" placeholder="무슨 생각을 하고 계신가요?" required></textarea>
+            <input type="file" name="image" accept="image/*">
+            <button type="submit" class="btn">게시</button>
+            <button type="button" class="btn btn-secondary" style="margin-top:5px" onclick="document.getElementById('postModal').style.display='none'">취소</button>
+        </form>
+    </div>
+</div>
+
+{% for post in posts %}
+<div class="sns-post">
+    <div class="post-header">
+        {{ post.author }}
+    </div>
+    {% if post.image_path %}
+    <div class="post-image">
+        <img src="{{ url_for('static', filename=post.image_path) }}" alt="Post image">
+    </div>
+    {% endif %}
+    <div class="post-content">
+        {{ post.content }}
+    </div>
+    <div class="post-actions">
+        <a href="{{ url_for('sns.like_post', post_id=post.id) }}" style="text-decoration:none">
+            {% if post.is_liked %}❤️{% else %}🤍{% endif %} {{ post.likes_count }}
+        </a>
+    </div>
+    <div class="post-comments">
+        {% for comment in post.comments %}
+        <div class="comment-item">
+            <span class="comment-author">{{ comment.author }}</span> {{ comment.content }}
+        </div>
+        {% endfor %}
+        <form action="{{ url_for('sns.add_comment', post_id=post.id) }}" method="POST" style="display:flex; margin-top:10px">
+            <input type="text" name="content" placeholder="댓글 달기..." required style="margin:0; flex:1">
+            <button type="submit" class="btn" style="width:auto; margin-left:5px">전송</button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

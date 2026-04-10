@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>로그인</h2>
+    <form method="POST">
+        <label>이름</label>
+        <input type="text" name="name" required>
+        <label>비밀번호</label>
+        <input type="password" name="password" required>
+        <button type="submit" class="btn">로그인</button>
+    </form>
+    <div style="margin-top: 15px; text-align: center;">
+        <a href="{{ url_for('auth.register') }}">회원가입 신청</a>
+    </div>
+</div>
+{% endblock %}

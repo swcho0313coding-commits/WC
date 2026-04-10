@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display:flex; align-items:center; margin-bottom:10px">
+    <a href="{{ url_for('admin.csv_editor') }}" style="text-decoration:none; margin-right:10px">🔙</a>
+    <h2 style="margin:0">{{ filename }} 편집</h2>
+</div>
+
+<form method="POST">
+    <div style="overflow-x:auto">
+        <table style="width:100%; border-collapse: collapse; background:white;">
+            <thead>
+                <tr>
+                    {% for h in headers %}
+                    <th style="border:1px solid #ddd; padding:8px; background:#f4f4f4">{{ h }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    {% for h in headers %}
+                    <td style="border:1px solid #ddd; padding:0">
+                        <input type="text" name="cell_{{ loop.parent.index0 }}_{{ h }}" value="{{ row[h] }}" style="border:none; width:100%; padding:8px; margin:0">
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div style="margin-top:20px">
+        <button type="submit" class="btn">변경사항 저장</button>
+    </div>
+</form>
+{% endblock %}

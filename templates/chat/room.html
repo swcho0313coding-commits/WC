@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    #chat-box {
+        height: 400px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        background: white;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+    .msg {
+        margin-bottom: 10px;
+        max-width: 80%;
+        padding: 8px 12px;
+        border-radius: 15px;
+        position: relative;
+    }
+    .msg.me {
+        align-self: flex-end;
+        background-color: var(--primary-color);
+        color: white;
+        border-bottom-right-radius: 2px;
+    }
+    .msg.other {
+        align-self: flex-start;
+        background-color: #e9ecef;
+        color: var(--text-color);
+        border-bottom-left-radius: 2px;
+    }
+    .msg-sender {
+        font-size: 0.7rem;
+        margin-bottom: 2px;
+        color: #666;
+    }
+    .msg-time {
+        font-size: 0.6rem;
+        margin-top: 2px;
+        opacity: 0.7;
+        text-align: right;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex; align-items:center; margin-bottom:10px">
+    <a href="{{ url_for('chat.index') }}" style="text-decoration:none; margin-right:10px">🔙</a>
+    <h2 style="margin:0">{{ room.name }}</h2>
+</div>
+
+<div id="chat-box">
+    {% for msg in messages %}
+    <div class="msg {% if msg.sender == session.user.name %}me{% else %}other{% endif %}">
+        {% if msg.sender != session.user.name %}
+        <div class="msg-sender">{{ msg.sender }}</div>
+        {% endif %}
+        <div class="msg-text">{{ msg.content }}</div>
+        <div class="msg-time">{{ msg.timestamp }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div style="display:flex">
+    <input type="text" id="msg-input" placeholder="메시지 입력..." style="margin:0; flex:1">
+    <button id="send-btn" class="btn" style="width:auto; margin-left:5px">전송</button>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const socket = io();
+    const roomId = "{{ room.room_id }}";
+    const myName = "{{ session.user.name }}";
+    const chatBox = document.getElementById('chat-box');
+
+    socket.emit('join', {room: roomId});
+
+    document.getElementById('send-btn').onclick = sendMessage;
+    document.getElementById('msg-input').onkeypress = (e) => {
+        if(e.key === 'Enter') sendMessage();
+    };
+
+    function sendMessage() {
+        const input = document.getElementById('msg-input');
+        if(input.value.trim()) {
+            socket.emit('message', {room: roomId, message: input.value});
+            input.value = '';
+        }
+    }
+
+    socket.on('message', (data) => {
+        const div = document.createElement('div');
+        div.className = `msg ${data.sender === myName ? 'me' : 'other'}`;
+
+        let html = '';
+        if(data.sender !== myName) {
+            html += `<div class="msg-sender">${data.sender}</div>`;
+        }
+        html += `<div class="msg-text">${data.content}</div>`;
+        html += `<div class="msg-time">${data.timestamp}</div>`;
+
+        div.innerHTML = html;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    socket.on('error', (data) => {
+        alert(data.msg);
+    });
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>회원가입 신청</h2>
+    <form method="POST">
+        <label>이름 (실명)</label>
+        <input type="text" name="name" required>
+        <label>비밀번호</label>
+        <input type="password" name="password" required>
+        <label>생년월일 (8자리: 예 19900101)</label>
+        <input type="text" name="birth" pattern="\d{8}" required placeholder="19900101">
+        <label>학년/반 (정보)</label>
+        <input type="text" name="school_info" required placeholder="3학년 2반">
+        <button type="submit" class="btn">가입 신청</button>
+    </form>
+    <div style="margin-top: 15px; text-align: center;">
+        <a href="{{ url_for('auth.login') }}">로그인으로 돌아가기</a>
+    </div>
+</div>
+{% endblock %}

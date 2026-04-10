@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>슬롯머신</h2>
+    <form method="POST">
+        <label>베팅액</label>
+        <input type="number" name="bet" min="100" value="1000" required>
+        <button type="submit" class="btn">돌리기!</button>
+    </form>
+</div>
+{% endblock %}

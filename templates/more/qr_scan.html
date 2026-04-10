@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>QR 코드 스캔</h2>
+<div class="card">
+    <p>웹캠을 사용하여 주민등록증의 QR 코드를 스캔하세요.</p>
+    <div id="reader" style="width:100%"></div>
+    <div id="result" style="margin-top:20px; display:none" class="card">
+        <h3>스캔 결과</h3>
+        <p id="scan-data"></p>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+    function onScanSuccess(decodedText, decodedResult) {
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('scan-data').innerText = decodedText;
+        // Optional: Redirect or Fetch user info based on QR data
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
+</script>
+{% endblock %}

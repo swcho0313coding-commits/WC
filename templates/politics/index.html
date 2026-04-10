@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>정치 / 행정</h2>
+
+<div class="card">
+    <h3>🗳️ 대통령 선거</h3>
+    {% if election %}
+        <p>현재 선거가 진행 중입니다. (상태: {{ election.status }})</p>
+        {% if election.status == 'registration' %}
+            <form action="{{ url_for('politics.register_candidate') }}" method="POST">
+                <button type="submit" class="btn">대통령 후보 등록 (3억 크레딧)</button>
+            </form>
+        {% elif election.status == 'voting' %}
+            <form action="{{ url_for('politics.vote') }}" method="POST">
+                <label>후보 선택</label>
+                <select name="candidate">
+                    {% for c in election.candidates.split(',') %}
+                    <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn">투표하기</button>
+            </form>
+        {% endif %}
+    {% else %}
+        <p>진행 중인 선거가 없습니다.</p>
+        {% if session.user.grade == '관리자' %}
+        <a href="{{ url_for('admin.start_election') }}" class="btn">선거령 발령 (관리자)</a>
+        {% endif %}
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>🚩 정당</h3>
+    <p>현재 {{ parties|length }}개의 정당이 활동 중입니다.</p>
+    <a href="{{ url_for('politics.parties_list') }}" class="btn btn-secondary">정당 목록 보기</a>
+    <a href="{{ url_for('politics.create_party') }}" class="btn" style="margin-top:10px">정당 창설 신청</a>
+</div>
+
+<div class="card">
+    <h3>🏛️ 국고 현황</h3>
+    <p>공개된 국고 정보가 없습니다. (권한 필요)</p>
+</div>
+{% endblock %}

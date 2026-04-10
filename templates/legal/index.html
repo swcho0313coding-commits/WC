@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>사법 / 법률</h2>
+
+<div class="card">
+    <h3>📜 법전</h3>
+    {% for law in laws %}
+    <div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px">
+        <strong>{{ law.name }}</strong>
+        <p style="font-size:0.9rem; color:#666">{{ law.content }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h3>⚖️ 고발 및 재판</h3>
+    <a href="{{ url_for('legal.report') }}" class="btn">고소/고발하기</a>
+    <a href="{{ url_for('legal.cases') }}" class="btn btn-secondary" style="margin-top:10px">사건 기록 보기</a>
+</div>
+{% endblock %}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config_country_name or '정부 시스템' }}</title>
+    <style>
+        :root {
+            --primary-color: #004a99;
+            --secondary-color: #007bff;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --white: #ffffff;
+            --border-color: #dee2e6;
+            --accent-color: #0056b3;
+        }
+
+        body {
+            font-family: 'NanumGothic', 'Apple SD Gothic Neo', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 70px; /* Space for bottom nav */
+        }
+
+        header {
+            background-color: var(--white);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #666;
+            font-size: 0.8rem;
+            text-align: center;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+        }
+
+        /* Button styles */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; }
+
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <h1>{{ config_country_name }} 정부 포털</h1>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+            <span class="nav-icon">🏠</span>
+            홈
+        </a>
+        <a href="{{ url_for('chat.index') }}" class="nav-item {% if 'chat' in request.endpoint %}active{% endif %}">
+            <span class="nav-icon">💬</span>
+            채팅
+        </a>
+        <a href="{{ url_for('politics.index') }}" class="nav-item {% if 'politics' in request.endpoint %}active{% endif %}">
+            <span class="nav-icon">⚖️</span>
+            정치
+        </a>
+        <a href="{{ url_for('games.index') }}" class="nav-item {% if 'games' in request.endpoint %}active{% endif %}">
+            <span class="nav-icon">🎮</span>
+            게임
+        </a>
+        <a href="{{ url_for('mypage.index') }}" class="nav-item {% if 'mypage' in request.endpoint %}active{% endif %}">
+            <span class="nav-icon">👤</span>
+            마이페이지
+        </a>
+        <a href="{{ url_for('more.index') }}" class="nav-item {% if 'more' in request.endpoint %}active{% endif %}">
+            <span class="nav-icon">➕</span>
+            더보기
+        </a>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

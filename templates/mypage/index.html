@@ -18,6 +18,20 @@
 </div>
 
 <div class="card">
+    <h3>🏅 나의 훈장</h3>
+    {% if medals %}
+        {% for medal in medals %}
+        <div style="margin-bottom:5px">
+            <strong>{{ medal.medal_name }}</strong> ({{ medal.timestamp }})
+            <p style="font-size:0.8rem; color:#666">{{ medal.reason }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>기록이 없습니다.</p>
+    {% endif %}
+</div>
+
+<div class="card">
     <h3>📜 전과 기록</h3>
     <p>기록이 없습니다.</p>
 </div>

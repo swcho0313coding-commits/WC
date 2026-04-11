@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>훈장 수여</h2>
+<div class="card">
+    <form method="POST">
+        <label>수훈자 이름</label>
+        <input type="text" name="user" required>
+        <label>훈장명</label>
+        <input type="text" name="medal" required placeholder="예: 건국공로훈장">
+        <label>수여 사유</label>
+        <textarea name="reason" required></textarea>
+        <label>포상금 (크레딧)</label>
+        <input type="number" name="reward" value="0">
+        <button type="submit" class="btn">수여하기</button>
+    </form>
+</div>
+{% endblock %}

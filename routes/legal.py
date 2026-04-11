@@ -61,8 +61,9 @@ def view_case(case_id):
 @legal_bp.route('/approve/<case_id>')
 @login_required
 def approve_case(case_id):
-    # Only 사법 1등급 can approve
-    if session['user']['grade'] != '사법 1등급' and session['user']['grade'] != '관리자':
+    # Only 사법 1등급 or 보안 0등급 or 관리자 can approve
+    user_grade = session['user']['grade']
+    if user_grade not in ['사법 1등급', '보안 0등급', '관리자']:
         flash("권한이 없습니다.")
         return redirect(url_for('legal.cases'))
 

@@ -37,6 +37,37 @@ def apply_loan():
     flash(f"{amount} 크레딧 대출이 승인되었습니다.")
     return redirect(url_for('bank.index'))
 
+@bank_bp.route('/transfer', methods=['POST'])
+@login_required
+def transfer():
+    recipient_name = request.form.get('recipient')
+    amount = int(request.form.get('amount'))
+    sender = session['user']
+
+    if sender['name'] == recipient_name:
+        flash("자신에게는 송금할 수 없습니다.")
+        return redirect(url_for('bank.index'))
+
+    recipient = get_user_by_name(recipient_name)
+    if not recipient:
+        flash("수취인을 찾을 수 없습니다.")
+        return redirect(url_for('bank.index'))
+
+    success, msg = EconomyService.update_user_assets(sender['name'], -amount, f"{recipient_name}에게 송금")
+    if success:
+        EconomyService.update_user_assets(recipient_name, amount, f"{sender['name']}로부터 송금")
+        flash(f"{recipient_name}님께 {amount} 크레딧을 성공적으로 송금했습니다.")
+    else:
+        flash(msg)
+    return redirect(url_for('bank.index'))
+
+def get_user_by_name(name):
+    users = CSVManager.read('data/users.csv')
+    for u in users:
+        if u['name'] == name:
+            return u
+    return None
+
 @bank_bp.route('/repay/<int:loan_idx>', methods=['POST'])
 @login_required
 def repay(loan_idx):

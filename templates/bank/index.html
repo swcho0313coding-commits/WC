@@ -2,6 +2,17 @@
 {% block content %}
 <h2>뉴 에덴 중앙은행</h2>
 <div class="card">
+    <h3>💸 계좌 이체</h3>
+    <form action="{{ url_for('bank.transfer') }}" method="POST">
+        <label>수취인 이름</label>
+        <input type="text" name="recipient" required>
+        <label>송금 금액</label>
+        <input type="number" name="amount" min="1" required>
+        <button type="submit" class="btn">송금하기</button>
+    </form>
+</div>
+
+<div class="card">
     <h3>💰 신속 대출</h3>
     <p>당신의 신용 점수: <strong>{{ session.user.credit_score }}</strong></p>
     <form action="{{ url_for('bank.apply_loan') }}" method="POST">

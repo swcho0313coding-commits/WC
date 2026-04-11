@@ -105,3 +105,23 @@ def vote():
     CSVManager.append('data/votes.csv', new_vote, ['election_id', 'voter', 'candidate', 'timestamp'])
     flash(f"{candidate} 후보에게 투표하였습니다.")
     return redirect(url_for('politics.index'))
+
+@politics_bp.route('/impeachment/propose', methods=['POST'])
+@login_required
+@permission_required('edit_csv') # 입법 1등급 권한 (simplified)
+def propose_impeachment():
+    target = request.form.get('target') # Should be the current president
+    reason = request.form.get('reason')
+
+    new_imp = {
+        'target': target,
+        'proposer': session['user']['name'],
+        'reason': reason,
+        'status': 'voting',
+        'votes_for': '0',
+        'votes_against': '0',
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    CSVManager.append('data/impeachment.csv', new_imp, ['target', 'proposer', 'reason', 'status', 'votes_for', 'votes_against', 'timestamp'])
+    flash("탄핵안이 발의되었습니다.")
+    return redirect(url_for('politics.index'))

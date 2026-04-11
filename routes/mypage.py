@@ -14,4 +14,6 @@ def index():
     session['user'] = user # Update session
 
     id_card_url = f"uploads/id_cards/{user['name']}_id.png"
-    return render_template('mypage/index.html', user=user, id_card_url=id_card_url)
+    medals = CSVManager.read('data/medals.csv')
+    user_medals = [m for m in medals if m['user'] == user['name']]
+    return render_template('mypage/index.html', user=user, id_card_url=id_card_url, medals=user_medals)

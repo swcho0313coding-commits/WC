@@ -7,6 +7,20 @@
     <h3>📊 시스템 요약</h3>
     <p>국가명: {{ config_country_name }}</p>
     <p>화폐단위: {{ config_currency_name }}</p>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px">
+        <div style="background:#f0f7ff; padding:10px; border-radius:5px">
+            <small>총 회원수</small><br><strong>{{ stats.user_count }}</strong>
+        </div>
+        <div style="background:#f0f7ff; padding:10px; border-radius:5px">
+            <small>국고 잔고</small><br><strong>{{ stats.treasury_balance }}</strong>
+        </div>
+        <div style="background:#f0f7ff; padding:10px; border-radius:5px">
+            <small>진행중인 재판</small><br><strong>{{ stats.active_trials }}</strong>
+        </div>
+        <div style="background:#f0f7ff; padding:10px; border-radius:5px">
+            <small>선거 진행중</small><br><strong>{{ '예' if stats.active_election else '아니오' }}</strong>
+        </div>
+    </div>
 </div>
 
 <div class="card">
@@ -14,6 +28,7 @@
     <a href="{{ url_for('admin.manage_users') }}" class="btn">회원 관리 및 승인</a>
     <a href="{{ url_for('admin.csv_editor') }}" class="btn btn-secondary" style="margin-top:10px">CSV 테이블 에디터</a>
     <a href="{{ url_for('admin.emergency') }}" class="btn alert-danger" style="margin-top:10px; color:white">비상사태 관리</a>
+    <a href="{{ url_for('admin.award_medal') }}" class="btn btn-secondary" style="margin-top:10px">훈장/포상 수여</a>
 </div>
 
 <div class="card">

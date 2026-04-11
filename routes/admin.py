@@ -9,7 +9,19 @@ admin_bp = Blueprint('admin', __name__)
 @login_required
 @permission_required('view_csv')
 def index():
-    return render_template('admin/index.html')
+    users = CSVManager.read('data/users.csv')
+    treasury = CSVManager.read('data/treasury.csv')
+    complaints = CSVManager.read('data/complaints.csv')
+    elections = CSVManager.read('data/elections.csv')
+
+    stats = {
+        'user_count': len(users),
+        'treasury_balance': treasury[0]['balance'] if treasury else '0',
+        'active_trials': len([c for c in complaints if c['status'] == 'trial_ongoing']),
+        'active_election': any(e['status'] != 'completed' for e in elections)
+    }
+
+    return render_template('admin/index.html', stats=stats)
 
 @admin_bp.route('/csv_editor')
 @login_required
@@ -115,3 +127,32 @@ def emergency():
 
     records = CSVManager.read('data/emergency_records.csv')
     return render_template('admin/emergency.html', records=records)
+
+@admin_bp.route('/award', methods=['GET', 'POST'])
+@login_required
+@permission_required('all')
+def award_medal():
+    if request.method == 'POST':
+        user_name = request.form.get('user')
+        medal_name = request.form.get('medal')
+        reason = request.form.get('reason')
+        reward = int(request.form.get('reward', 0))
+
+        new_medal = {
+            'user': user_name,
+            'medal_name': medal_name,
+            'reason': reason,
+            'issuer': session['user']['name'],
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'reward': str(reward)
+        }
+        CSVManager.append('data/medals.csv', new_medal, ['user', 'medal_name', 'reason', 'issuer', 'timestamp', 'reward'])
+
+        if reward > 0:
+            from services.economy import EconomyService
+            EconomyService.update_user_assets(user_name, reward, f"훈장 수여 포상금 ({medal_name})")
+
+        flash(f"{user_name}님께 {medal_name} 훈장을 수여했습니다.")
+        return redirect(url_for('admin.index'))
+
+    return render_template('admin/award.html')

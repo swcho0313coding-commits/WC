@@ -8,12 +8,3 @@ Werkzeug appears to be used in a production deployment. Consider switching to a 
 Werkzeug appears to be used in a production deployment. Consider switching to a production web server instead.
  * Debugger is active!
  * Debugger PIN: 631-326-424
-127.0.0.1 - - [10/Apr/2026 12:43:09] "GET /auth/login HTTP/1.1" 200 -
-127.0.0.1 - - [10/Apr/2026 12:43:10] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
-127.0.0.1 - - [10/Apr/2026 12:43:10] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [10/Apr/2026 12:43:11] "[32mGET /sns HTTP/1.1[0m" 308 -
-127.0.0.1 - - [10/Apr/2026 12:43:11] "GET /sns/ HTTP/1.1" 200 -
-127.0.0.1 - - [10/Apr/2026 12:43:12] "[32mGET /chat HTTP/1.1[0m" 308 -
-127.0.0.1 - - [10/Apr/2026 12:43:12] "GET /chat/ HTTP/1.1" 200 -
-127.0.0.1 - - [10/Apr/2026 12:43:13] "[32mGET /politics HTTP/1.1[0m" 308 -
-127.0.0.1 - - [10/Apr/2026 12:43:13] "GET /politics/ HTTP/1.1" 200 -

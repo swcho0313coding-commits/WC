@@ -12,6 +12,26 @@ def setup_socket_events(socketio):
 
     @socketio.on('message')
     def handle_message(data):
+        # Flood protection
+        now = datetime.now()
+        last_time = session.get('last_msg_time')
+        msg_count = session.get('msg_count', 0)
+
+        if last_time:
+            last_dt = datetime.fromisoformat(last_time)
+            if (now - last_dt).total_seconds() < 2: # N=2 seconds
+                msg_count += 1
+                if msg_count > 3: # M=3 messages
+                    emit('error', {'msg': '도배 금지! 잠시 후 다시 시도하세요.'}, room=request.sid)
+                    return
+            else:
+                msg_count = 1
+        else:
+            msg_count = 1
+
+        session['last_msg_time'] = now.isoformat()
+        session['msg_count'] = msg_count
+
         room = data['room']
         content = data['message']
         sender = session['user']['name']

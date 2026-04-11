@@ -42,6 +42,15 @@ scheduler.add_job(func=EconomyService.pay_salaries, trigger="interval", weeks=1)
 scheduler.add_job(func=ElectionService.transition_phases, trigger="interval", hours=1)
 scheduler.start()
 
+# IP Blocking Check
+@app.before_request
+def check_ip_block():
+    ip = request.remote_addr
+    blocks = CSVManager.read('data/ip_blocks.csv')
+    for b in blocks:
+        if b['ip'] == ip:
+            return f"Access Denied: Your IP ({ip}) is blocked. Reason: {b['reason']}", 403
+
 # Context Processor for common variables
 @app.context_processor
 def inject_config():

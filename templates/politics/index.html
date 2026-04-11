@@ -38,6 +38,20 @@
 </div>
 
 <div class="card">
+    <h3>📜 입법 활동</h3>
+    <a href="{{ url_for('politics.propose_law') }}" class="btn">새 법안 발의</a>
+    <a href="{{ url_for('politics.review_laws') }}" class="btn btn-secondary" style="margin-top:10px">법안 심사 및 승인</a>
+</div>
+
+<div class="card">
+    <h3>🚫 탄핵 심판</h3>
+    <form action="{{ url_for('politics.vote_impeachment') }}" method="POST">
+        <button type="submit" name="vote" value="for" class="btn alert-danger" style="color:white">탄핵 찬성</button>
+        <button type="submit" name="vote" value="against" class="btn btn-secondary" style="margin-top:5px">탄핵 반대</button>
+    </form>
+</div>
+
+<div class="card">
     <h3>🏛️ 국고 현황</h3>
     <p>공개된 국고 정보가 없습니다. (권한 필요)</p>
 </div>

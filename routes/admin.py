@@ -73,6 +73,36 @@ def manage_users():
     users = CSVManager.read('data/users.csv')
     return render_template('admin/users.html', users=users)
 
+@admin_bp.route('/ban_management')
+@login_required
+@permission_required('ban_user')
+def ban_management():
+    users = CSVManager.read('data/users.csv')
+    banned_users = [u for u in users if u['status'] == 'banned']
+    return render_template('admin/ban_management.html', users=banned_users)
+
+@admin_bp.route('/resolve_ban/<name>/<action>')
+@login_required
+@permission_required('ban_user')
+def resolve_ban(name, action):
+    users = CSVManager.read('data/users.csv')
+    headers = ['name', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score']
+
+    if action == 'delete':
+        users = [u for u in users if u['name'] != name]
+        CSVManager.write('data/users.csv', users, headers)
+        flash(f"{name} 계정이 영구 삭제되었습니다.")
+    elif action == 'restore':
+        for u in users:
+            if u['name'] == name:
+                u['status'] = 'active'
+                break
+        CSVManager.write('data/users.csv', users, headers)
+        # Clear penalties for this user?
+        flash(f"{name} 계정이 복구되었습니다.")
+
+    return redirect(url_for('admin.ban_management'))
+
 @admin_bp.route('/approve_user/<name>')
 @login_required
 @permission_required('set_grade')

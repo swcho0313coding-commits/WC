@@ -235,3 +235,26 @@ def roulette():
             flash(f"낙첨... 결과: {result_num}")
 
     return render_template('games/roulette.html')
+
+@games_bp.route('/horse', methods=['GET', 'POST'])
+@login_required
+def horse_racing():
+    if request.method == 'POST':
+        bet = int(request.form.get('bet'))
+        chosen_horse = int(request.form.get('horse')) # 1-4
+        user = session['user']
+
+        if int(user['assets']) < bet:
+            flash("자산이 부족합니다.")
+            return redirect(url_for('games.horse_racing'))
+
+        winner = random.randint(1, 4)
+        if chosen_horse == winner:
+            win_amount = bet * 3
+            EconomyService.update_user_assets(user['name'], win_amount, f"경마 승리 ({winner}번 마)")
+            flash(f"우승! {winner}번 마가 1등입니다! {win_amount} 크레딧 획득!")
+        else:
+            EconomyService.update_user_assets(user['name'], -bet, f"경마 패배 (우승: {winner}번 마)")
+            flash(f"패배... 우승마는 {winner}번 마였습니다.")
+
+    return render_template('games/horse.html')

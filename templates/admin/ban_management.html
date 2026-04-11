@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>정지된 계정 관리 (벌점 200점 도달)</h2>
+{% for user in users %}
+<div class="card">
+    <p><strong>{{ user.name }}</strong> (현재 상태: {{ user.status }})</p>
+    <div style="display:flex; gap:10px">
+        <a href="{{ url_for('admin.resolve_ban', name=user.name, action='delete') }}" class="btn alert-danger" style="color:white">영구 삭제</a>
+        <a href="{{ url_for('admin.resolve_ban', name=user.name, action='restore') }}" class="btn btn-secondary">계정 복구</a>
+    </div>
+</div>
+{% endfor %}
+{% if not users %}
+<p>현재 정지된 계정이 없습니다.</p>
+{% endif %}
+{% endblock %}

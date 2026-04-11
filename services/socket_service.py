@@ -54,6 +54,23 @@ def setup_socket_events(socketio):
 
         emit('message', new_msg, room=room)
 
+    @socketio.on('file_upload')
+    def handle_file(data):
+        # In a real app, we'd handle the binary data.
+        # Here we simplified: just notify and log.
+        room = data['room']
+        sender = session['user']['name']
+        filename = data['filename']
+
+        new_msg = {
+            'room_id': room,
+            'sender': sender,
+            'content': f"[파일 전송됨: {filename}]",
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        CSVManager.append('data/chat_messages.csv', new_msg, ['room_id', 'sender', 'content', 'timestamp'])
+        emit('message', new_msg, room=room)
+
         # Update last message in room
         rooms = CSVManager.read('data/chat_rooms.csv')
         for r in rooms:

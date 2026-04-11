@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>법안 심사 목록</h2>
+{% for law in laws %}
+<div class="card">
+    <h3>{{ law.title }}</h3>
+    <p>발의자: {{ law.proposer }} | 상태: {{ law.status }}</p>
+    <p>{{ law.content[:100] }}...</p>
+    {% if law.status == 'pending_legislative' and '입법' in session.user.grade %}
+    <form action="{{ url_for('politics.vote_law', law_id=law.id) }}" method="POST">
+        <button type="submit" name="vote" value="for" class="btn" style="width:auto">찬성</button>
+        <button type="submit" name="vote" value="against" class="btn btn-secondary" style="width:auto">반대</button>
+    </form>
+    {% elif law.status == 'pending_president' and session.user.grade == '대통령급' %}
+    <form action="{{ url_for('politics.approve_law', law_id=law.id) }}" method="POST">
+        <button type="submit" name="action" value="approve" class="btn" style="width:auto">최종 승인 (공포)</button>
+        <button type="submit" name="action" value="reject" class="btn btn-secondary" style="width:auto">거부권 행사</button>
+    </form>
+    {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

@@ -106,6 +106,86 @@ def vote():
     flash(f"{candidate} 후보에게 투표하였습니다.")
     return redirect(url_for('politics.index'))
 
+@politics_bp.route('/laws/propose', methods=['GET', 'POST'])
+@login_required
+@permission_required('edit_csv') # 입법 1~7등급 (simplified)
+def propose_law():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        content = request.form.get('content')
+
+        new_law = {
+            'id': str(uuid.uuid4()),
+            'title': title,
+            'content': content,
+            'proposer': session['user']['name'],
+            'status': 'pending_legislative',
+            'votes_for': '0',
+            'votes_against': '0',
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        CSVManager.append('data/proposed_laws.csv', new_law, ['id', 'title', 'content', 'proposer', 'status', 'votes_for', 'votes_against', 'timestamp'])
+        flash("법안이 발의되었습니다.")
+        return redirect(url_for('politics.index'))
+    return render_template('politics/propose_law.html')
+
+@politics_bp.route('/laws/review')
+@login_required
+def review_laws():
+    proposed = CSVManager.read('data/proposed_laws.csv')
+    return render_template('politics/review_laws.html', laws=proposed)
+
+@politics_bp.route('/laws/vote/<law_id>', methods=['POST'])
+@login_required
+def vote_law(law_id):
+    # Simplified: only 입법 grades can vote
+    if '입법' not in session['user']['grade']:
+        flash("입법부 권한이 필요합니다.")
+        return redirect(url_for('politics.review_laws'))
+
+    vote_val = request.form.get('vote')
+    proposed = CSVManager.read('data/proposed_laws.csv')
+    for p in proposed:
+        if p['id'] == law_id:
+            if vote_val == 'for': p['votes_for'] = str(int(p['votes_for']) + 1)
+            else: p['votes_against'] = str(int(p['votes_against']) + 1)
+
+            # Transition to president if enough votes (simplified: > 1 vote)
+            if int(p['votes_for']) >= 1:
+                p['status'] = 'pending_president'
+            break
+    CSVManager.write('data/proposed_laws.csv', proposed, ['id', 'title', 'content', 'proposer', 'status', 'votes_for', 'votes_against', 'timestamp'])
+    return redirect(url_for('politics.review_laws'))
+
+@politics_bp.route('/laws/approve/<law_id>', methods=['POST'])
+@login_required
+def approve_law(law_id):
+    if session['user']['grade'] != '대통령급':
+        flash("대통령 권한이 필요합니다.")
+        return redirect(url_for('politics.review_laws'))
+
+    action = request.form.get('action')
+    proposed = CSVManager.read('data/proposed_laws.csv')
+    for p in proposed:
+        if p['id'] == law_id:
+            if action == 'approve':
+                p['status'] = 'approved'
+                # Add to final laws.csv
+                new_law = {
+                    'id': p['id'],
+                    'name': p['title'],
+                    'content': p['content'],
+                    'punishment': '재판 결과에 따름'
+                }
+                CSVManager.append('data/laws.csv', new_law, ['id', 'name', 'content', 'punishment'])
+                flash("법안이 최종 승인 및 공포되었습니다.")
+            else:
+                p['status'] = 'rejected'
+                flash("거부권이 행사되었습니다.")
+            break
+    CSVManager.write('data/proposed_laws.csv', proposed, ['id', 'title', 'content', 'proposer', 'status', 'votes_for', 'votes_against', 'timestamp'])
+    return redirect(url_for('politics.review_laws'))
+
 @politics_bp.route('/impeachment/propose', methods=['POST'])
 @login_required
 @permission_required('edit_csv') # 입법 1등급 권한 (simplified)
@@ -124,4 +204,34 @@ def propose_impeachment():
     }
     CSVManager.append('data/impeachment.csv', new_imp, ['target', 'proposer', 'reason', 'status', 'votes_for', 'votes_against', 'timestamp'])
     flash("탄핵안이 발의되었습니다.")
+    return redirect(url_for('politics.index'))
+
+@politics_bp.route('/impeachment/vote', methods=['POST'])
+@login_required
+def vote_impeachment():
+    vote_val = request.form.get('vote')
+    imps = CSVManager.read('data/impeachment.csv')
+    updated = False
+    for i in imps:
+        if i['status'] == 'voting':
+            if vote_val == 'for': i['votes_for'] = str(int(i['votes_for']) + 1)
+            else: i['votes_against'] = str(int(i['votes_against']) + 1)
+
+            # 2/3 majority check (simplified: 2 votes for now)
+            if int(i['votes_for']) >= 2:
+                i['status'] = 'impeached'
+                # Presidential Succession
+                users = CSVManager.read('data/users.csv')
+                for u in users:
+                    if u['name'] == i['target']:
+                        u['grade'] = '국민 9등급' # Demoted
+                        u['status'] = 'banned'
+                    if u['grade'] == '국무총리급':
+                        u['grade'] = '대통령급' # Succession
+                CSVManager.write('data/users.csv', users, ['name', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score'])
+            updated = True
+            break
+    if updated:
+        CSVManager.write('data/impeachment.csv', imps, ['target', 'proposer', 'reason', 'status', 'votes_for', 'votes_against', 'timestamp'])
+        flash("탄핵 투표가 반영되었습니다.")
     return redirect(url_for('politics.index'))

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>법안 발의</h2>
+    <form method="POST">
+        <label>법안 제목</label>
+        <input type="text" name="title" required>
+        <label>법안 상세 내용</label>
+        <textarea name="content" required style="height:200px"></textarea>
+        <button type="submit" class="btn">발의하기</button>
+    </form>
+</div>
+{% endblock %}

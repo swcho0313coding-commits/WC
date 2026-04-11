@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>뉴 에덴 경마장</h2>
+    <form method="POST">
+        <label>우승마 선택</label>
+        <select name="horse">
+            <option value="1">1번 마 (번개)</option>
+            <option value="2">2번 마 (태풍)</option>
+            <option value="3">3번 마 (불꽃)</option>
+            <option value="4">4번 마 (질주)</option>
+        </select>
+        <label>베팅액</label>
+        <input type="number" name="bet" value="1000" min="100">
+        <button type="submit" class="btn">경기 시작!</button>
+    </form>
+</div>
+{% endblock %}

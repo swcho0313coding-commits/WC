@@ -97,11 +97,15 @@ def verdict(case_id):
     case = next((c for c in cases if c['id'] == case_id), None)
     if not case: return redirect(url_for('legal.cases'))
 
+    penalty_score = int(request.form.get('penalty_score', 0))
+
     if result == 'guilty':
         case['status'] = 'guilty'
         if fine > 0:
             EconomyService.update_user_assets(case['target'], -fine, f"재판 판결 벌금 납부 ({case_id})")
             EconomyService.update_treasury(fine, f"재판 벌금 수입 ({case_id})")
+        if penalty_score > 0:
+            CSVManager.add_penalty(case['target'], f"재판 판결 ({case_id})", penalty_score, session['user']['name'])
     else:
         case['status'] = 'innocent'
 

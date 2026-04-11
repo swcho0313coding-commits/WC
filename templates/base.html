@@ -136,6 +136,10 @@
         <h1>{{ config_country_name }} 정부 포털</h1>
     </header>
 
+    <div id="global-alert" style="display:none; position:fixed; top:70px; left:0; right:0; background:rgba(0,74,153,0.9); color:white; padding:10px; text-align:center; z-index:2001; font-weight:bold;">
+        📢 <span id="alert-text"></span>
+    </div>
+
     <div class="container">
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -176,6 +180,16 @@
     </nav>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const globalSocket = io();
+        globalSocket.on('notification', (data) => {
+            const alertBox = document.getElementById('global-alert');
+            const alertText = document.getElementById('alert-text');
+            alertText.innerText = data.msg;
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

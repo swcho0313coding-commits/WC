@@ -26,6 +26,7 @@
 <div class="card">
     <h3>🛠️ 관리 도구</h3>
     <a href="{{ url_for('admin.manage_users') }}" class="btn">회원 관리 및 승인</a>
+    <a href="{{ url_for('admin.ban_management') }}" class="btn alert-danger" style="margin-top:10px; color:white">벌점 200점 승인 큐</a>
     <a href="{{ url_for('admin.csv_editor') }}" class="btn btn-secondary" style="margin-top:10px">CSV 테이블 에디터</a>
     <a href="{{ url_for('admin.emergency') }}" class="btn alert-danger" style="margin-top:10px; color:white">비상사태 관리</a>
     <a href="{{ url_for('admin.award_medal') }}" class="btn btn-secondary" style="margin-top:10px">훈장/포상 수여</a>

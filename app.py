@@ -64,7 +64,30 @@ def index():
     if 'user' not in session:
         from flask import redirect, url_for
         return redirect(url_for('auth.login'))
-    return render_template('index.html', user=session['user'])
+
+    # Refresh user session from CSV to catch grade changes
+    from utils.auth import get_user_by_name
+    user = get_user_by_name(session['user']['name'])
+    session['user'] = user
+
+    return render_template('index.html', user=user)
+
+@app.route('/survival', methods=['POST'])
+def survival():
+    if 'user' not in session: return redirect(url_for('auth.login'))
+    user = session['user']['name']
+    date = datetime.now().strftime('%Y-%m-%d')
+
+    # Check if already done today
+    recs = CSVManager.read('data/attendance.csv')
+    if any(r['user'] == user and r['date'] == date for r in recs):
+        flash("이미 생존신고를 완료했습니다.")
+    else:
+        CSVManager.append('data/attendance.csv',
+                          {'user': user, 'date': date, 'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')},
+                          ['user', 'date', 'timestamp'])
+        flash("생존신고가 완료되었습니다.")
+    return redirect(url_for('index'))
 
 # Placeholder routes for navigation (will be replaced by actual blueprints)
 

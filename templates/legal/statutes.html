@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>코리아민국 성문법전</h2>
+<div class="card">
+    {% for file in files %}
+    <div style="margin-bottom:10px">
+        <a href="{{ url_for('legal.view_statute', name=file) }}" class="btn">{{ file }}</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -12,12 +12,10 @@ class UserUtils:
         return ''.join(random.choices(chars, k=4))
 
     @staticmethod
-    def generate_resident_id(birth):
-        # 생년월일 앞 6자리 + 성별/순번 기반 뒷 7자리
-        # 생년월일 형식 YYYYMMDD -> YYMMDD
-        prefix = birth[2:]
-        suffix = str(random.randint(1, 4)) + str(random.randint(0, 999999)).zfill(6)
-        return f"{prefix}-{suffix}"
+    def generate_resident_id(name, school_info):
+        # KR-[학교명]-[학년반]-[이름]
+        # school_info is expected to be "학교명 학년반" or just "학년반"
+        return f"KR-{school_info}-{name}"
 
     @staticmethod
     def create_id_card(user):

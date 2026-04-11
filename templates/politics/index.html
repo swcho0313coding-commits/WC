@@ -3,6 +3,13 @@
 {% block content %}
 <h2>정치 / 행정</h2>
 
+{% if session.user.grade == '대통령급' or session.user.grade == '관리자' %}
+<div class="card">
+    <h3>💼 행정부 관리</h3>
+    <a href="{{ url_for('politics.manage_cabinet') }}" class="btn">내각 임명 및 관리</a>
+</div>
+{% endif %}
+
 <div class="card">
     <h3>🗳️ 대통령 선거</h3>
     {% if election %}

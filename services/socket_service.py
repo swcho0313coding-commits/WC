@@ -12,6 +12,24 @@ def setup_socket_events(socketio):
 
     @socketio.on('message')
     def handle_message(data):
+        # Mute check (Weapon hits)
+        username = session['user']['name']
+        hits = CSVManager.read('data/weapon_hits.csv')
+        now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        for h in hits:
+            if h['target'] == username and h['expire_at'] > now_str:
+                emit('error', {'msg': f"당신은 무기에 피격되어 대화가 금지되었습니다. (만료: {h['expire_at']})"}, room=request.sid)
+                return
+
+        # Martial Law / Emergency Check
+        from services.emergency import EmergencyService
+        is_em, em_type = EmergencyService.is_emergency()
+        if is_em and em_type == 'martial_law':
+            # Check for잡담 (simplified: messages without "!")
+            if "!" not in content and "?" not in content:
+                 # In martial law, only essential 공적 발언 (simplified check)
+                 pass
+
         # Flood protection
         now = datetime.now()
         last_time = session.get('last_msg_time')

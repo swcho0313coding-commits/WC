@@ -3,6 +3,7 @@ from utils.csv_manager import CSVManager
 from utils.auth import login_required, permission_required
 from datetime import datetime
 import uuid
+from services.economy import EconomyService
 
 legal_bp = Blueprint('legal', __name__)
 
@@ -61,7 +62,6 @@ def view_case(case_id):
 @legal_bp.route('/approve/<case_id>')
 @login_required
 def approve_case(case_id):
-    # Only 사법 1등급 or 보안 0등급 or 관리자 can approve
     user_grade = session['user']['grade']
     if user_grade not in ['사법 1등급', '보안 0등급', '관리자']:
         flash("권한이 없습니다.")
@@ -71,7 +71,6 @@ def approve_case(case_id):
     for c in cases:
         if c['id'] == case_id:
             c['status'] = 'trial_ongoing'
-            # Create a special chat room for trial
             new_room = {
                 'room_id': f"trial_{case_id}",
                 'type': 'private',
@@ -88,37 +87,40 @@ def approve_case(case_id):
 
 @legal_bp.route('/verdict/<case_id>', methods=['POST'])
 @login_required
-@permission_required('all') # Admin or 사법 1등급 (simplified)
+@permission_required('all')
 def verdict(case_id):
-    result = request.form.get('result') # guilty, innocent
+    tier = request.form.get('tier', '1')
+    result = request.form.get('result')
     fine = int(request.form.get('fine', 0))
+    penalty_score = int(request.form.get('penalty_score', 0))
 
     cases = CSVManager.read('data/complaints.csv')
     case = next((c for c in cases if c['id'] == case_id), None)
     if not case: return redirect(url_for('legal.cases'))
 
-    penalty_score = int(request.form.get('penalty_score', 0))
+    if tier == '1': case['status'] = f'tier1_{result}'
+    elif tier == '2': case['status'] = f'tier2_{result}'
+    elif tier == '3': case['status'] = f'final_{result}'
 
-    if result == 'guilty':
-        case['status'] = 'guilty'
-        if fine > 0:
-            EconomyService.update_user_assets(case['target'], -fine, f"재판 판결 벌금 납부 ({case_id})")
-            EconomyService.update_treasury(fine, f"재판 벌금 수입 ({case_id})")
-        if penalty_score > 0:
-            CSVManager.add_penalty(case['target'], f"재판 판결 ({case_id})", penalty_score, session['user']['name'])
-    else:
-        case['status'] = 'innocent'
+    if result == 'guilty' and tier == '3':
+        EconomyService.update_user_assets(case['target'], -fine, f"재판 최종 판결 벌금 ({case_id})")
+        CSVManager.add_penalty(case['target'], f"재판 최종 판결 ({case_id})", penalty_score, session['user']['name'])
 
     CSVManager.write('data/complaints.csv', cases, ['id', 'reporter', 'target', 'reason', 'law_id', 'status', 'timestamp'])
+    flash(f"{tier}심 판결이 등록되었습니다.")
+    return redirect(url_for('legal.view_case', case_id=case_id))
 
-    # Record in criminal records
-    record = {
-        'user': case['target'],
-        'crime': case['reason'],
-        'punishment': f"{result} (벌금 {fine})" if result == 'guilty' else 'innocent',
-        'date': datetime.now().strftime('%Y-%m-%d')
-    }
-    CSVManager.append('data/criminal_records.csv', record, ['user', 'crime', 'punishment', 'date'])
+@legal_bp.route('/statutes')
+@login_required
+def list_statutes():
+    files = [f for f in os.listdir('data/statutes') if f.endswith('.txt')]
+    return render_template('legal/statutes.html', files=files)
 
-    flash("판결이 확정 및 집행되었습니다.")
-    return redirect(url_for('legal.cases'))
+@legal_bp.route('/statutes/<name>')
+@login_required
+def view_statute(name):
+    filepath = os.path.join('data/statutes', name)
+    if not os.path.exists(filepath): return redirect(url_for('legal.list_statutes'))
+    with open(filepath, 'r', encoding='utf-8-sig') as f:
+        content = f.read()
+    return render_template('legal/view_statute.html', name=name, content=content)

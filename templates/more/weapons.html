@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>무기 체계 운용</h2>
+<div class="card">
+    <p>무기 사용은 헌법 및 법률에 따라 엄격히 제한됩니다.</p>
+    <form method="POST">
+        <label>타격 대상 국민</label>
+        <input type="text" name="target" required placeholder="이름 입력">
+        <label>무기 선택</label>
+        <select name="weapon">
+            <option value="revolver">리볼버 (24시간 대화 금지)</option>
+            <option value="howitzer">자주포 (48시간 대화 금지)</option>
+            <option value="grenade">수류탄 (12시간 대화 금지)</option>
+            <option value="sniper">저격소총 (72시간 대화 금지)</option>
+            <option value="icbm">ICBM (영구 강제퇴장)</option>
+        </select>
+        <button type="submit" class="btn alert-danger" style="color:white">발사 승인</button>
+    </form>
+</div>
+{% endblock %}

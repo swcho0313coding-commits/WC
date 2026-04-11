@@ -23,6 +23,8 @@ class ElectionService:
 
     @staticmethod
     def transition_phases():
+        # presidential_term_weeks is ignored as per the new Constitution:
+        # "임기는 탄핵될 때까지로 하며, 별도의 임기를 두지 아니한다."
         elections = CSVManager.read('data/elections.csv')
         updated = False
         now = datetime.now()

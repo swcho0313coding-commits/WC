@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ name }}</h2>
+<div class="card" style="white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; max-height: 500px; overflow-y: auto;">
+{{ content }}
+</div>
+<a href="{{ url_for('legal.list_statutes') }}" class="btn btn-secondary" style="margin-top:10px">목록으로</a>
+{% endblock %}

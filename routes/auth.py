@@ -41,7 +41,7 @@ def register():
             return redirect(url_for('auth.register'))
 
         phone = UserUtils.generate_phone()
-        resident_id = UserUtils.generate_resident_id(birth)
+        resident_id = UserUtils.generate_resident_id(name, school_info)
         initial_assets = CSVManager.get_config('initial_assets') or '50000'
 
         new_user = {

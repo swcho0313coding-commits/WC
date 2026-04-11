@@ -9,21 +9,25 @@
     <p><strong>상태:</strong> {{ case.status }}</p>
 </div>
 
-{% if case.status == 'trial_ongoing' and session.user.grade in ['사법 1등급', '관리자'] %}
 <div class="card">
-    <h3>⚖️ 판결 내리기</h3>
+    <h3>⚖️ 판결 내리기 (3심제)</h3>
     <form action="{{ url_for('legal.verdict', case_id=case.id) }}" method="POST">
+        <label>심급 선택</label>
+        <select name="tier">
+            <option value="1">1심 (대법원장)</option>
+            <option value="2">2심 (인공지능)</option>
+            <option value="3">3심 (최종 위원회)</option>
+        </select>
         <label>결과</label>
         <select name="result">
             <option value="guilty">유죄</option>
             <option value="innocent">무죄</option>
         </select>
-        <label>벌금액 (크레딧)</label>
+        <label>벌금액 (크레딧) - 3심만 적용</label>
         <input type="number" name="fine" value="0">
-        <label>벌점 부과</label>
+        <label>벌점 부과 - 3심만 적용</label>
         <input type="number" name="penalty_score" value="0">
-        <button type="submit" class="btn">판결 확정</button>
+        <button type="submit" class="btn">판결 등록</button>
     </form>
 </div>
-{% endif %}
 {% endblock %}

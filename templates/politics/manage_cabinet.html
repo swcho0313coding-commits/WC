@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>내각 관리 (대통령 전용)</h2>
+<div class="card">
+    <form method="POST">
+        <label>대상 국민 이름</label>
+        <input type="text" name="user" required>
+        <label>임명 직책</label>
+        <select name="position">
+            <option value="국무총리급">국무총리</option>
+            <option value="부총리">부총리</option>
+            <option value="행정안전부장관">행정안전부장관</option>
+            <option value="재정경제부장관">재정경제부장관</option>
+            <option value="국방부장관">국방부장관</option>
+            <option value="법무부장관">법무부장관</option>
+            <option value="외교부장관">외교부장관</option>
+            <option value="교육부장관">교육부장관</option>
+        </select>
+        <button type="submit" class="btn">임명하기</button>
+    </form>
+</div>
+{% endblock %}

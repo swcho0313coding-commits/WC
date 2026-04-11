@@ -235,3 +235,24 @@ def vote_impeachment():
         CSVManager.write('data/impeachment.csv', imps, ['target', 'proposer', 'reason', 'status', 'votes_for', 'votes_against', 'timestamp'])
         flash("탄핵 투표가 반영되었습니다.")
     return redirect(url_for('politics.index'))
+
+@politics_bp.route('/cabinet/manage', methods=['GET', 'POST'])
+@login_required
+def manage_cabinet():
+    if session['user']['grade'] != '대통령급' and session['user']['grade'] != '관리자':
+        flash("권한이 없습니다.")
+        return redirect(url_for('politics.index'))
+
+    if request.method == 'POST':
+        target_user = request.form.get('user')
+        position = request.form.get('position') # 국무총리, 장관 등
+
+        users = CSVManager.read('data/users.csv')
+        for u in users:
+            if u['name'] == target_user:
+                u['grade'] = position
+                break
+        CSVManager.write('data/users.csv', users, ['name', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score'])
+        flash(f"{target_user}님을 {position}(으)로 임명하였습니다.")
+
+    return render_template('politics/manage_cabinet.html')

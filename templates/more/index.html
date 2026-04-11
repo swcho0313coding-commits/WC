@@ -3,6 +3,7 @@
 <h2>더보기 / 시스템</h2>
 <div class="card">
     <a href="{{ url_for('more.qr_scan') }}" class="btn">QR 코드 스캐너</a>
+    <a href="{{ url_for('more.weapons') }}" class="btn alert-danger" style="margin-top:10px; color:white">무기 체계 (보안/군사)</a>
     <a href="{{ url_for('sns.index') }}" class="btn btn-secondary" style="margin-top:10px">SNS (뉴 에덴 피드)</a>
     {% if session.user.grade == '관리자' %}
     <a href="{{ url_for('admin.index') }}" class="btn alert-danger" style="margin-top:10px; color:white">관리자 패널</a>

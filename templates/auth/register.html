@@ -6,12 +6,18 @@
     <form method="POST">
         <label>이름 (실명)</label>
         <input type="text" name="name" required>
+        <label>로그인 ID</label>
+        <input type="text" name="login_id" required>
         <label>비밀번호</label>
         <input type="password" name="password" required>
+        <label>비밀번호 확인</label>
+        <input type="password" name="password_confirm" required>
+        <label>전화번호</label>
+        <input type="text" name="phone" required placeholder="010-1234-5678">
         <label>생년월일 (8자리: 예 19900101)</label>
         <input type="text" name="birth" pattern="\d{8}" required placeholder="19900101">
         <label>학년/반 (정보)</label>
-        <input type="text" name="school_info" required placeholder="3학년 2반">
+        <input type="text" name="school_info" required placeholder="ㅇㅇ고등학교 3학년 2반">
         <button type="submit" class="btn">가입 신청</button>
     </form>
     <div style="margin-top: 15px; text-align: center;">

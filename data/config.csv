@@ -1,4 +1,4 @@
-﻿key,value
+key,value
 country_name,코리아민국
 currency_name,크레딧
 spam_n,5
@@ -7,5 +7,5 @@ lottery_price,50000
 lottery_prize,2000000000
 initial_assets,50000
 election_fee,300000000
-presidency_term_weeks,3
 max_file_size_mb,10
+last_grade_update,2023-03-01

@@ -113,14 +113,22 @@ def verdict(case_id):
 @legal_bp.route('/statutes')
 @login_required
 def list_statutes():
-    files = [f for f in os.listdir('data/statutes') if f.endswith('.txt')]
+    # Dynamic reading from laws folder
+    files = [f for f in os.listdir('data/laws') if f.endswith('.txt') or f.endswith('.md')]
     return render_template('legal/statutes.html', files=files)
 
 @legal_bp.route('/statutes/<name>')
 @login_required
 def view_statute(name):
-    filepath = os.path.join('data/statutes', name)
+    filepath = os.path.join('data/laws', name)
     if not os.path.exists(filepath): return redirect(url_for('legal.list_statutes'))
+
     with open(filepath, 'r', encoding='utf-8-sig') as f:
         content = f.read()
+
+    # Placeholder Replacement
+    country = CSVManager.get_config('country_name')
+    currency = CSVManager.get_config('currency_name')
+    content = content.replace('{국가이름}', country).replace('{화폐단위}', currency)
+
     return render_template('legal/view_statute.html', name=name, content=content)

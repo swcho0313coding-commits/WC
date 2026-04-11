@@ -9,10 +9,12 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        name = request.form.get('name')
+        login_id = request.form.get('login_id')
         password = request.form.get('password')
 
-        user = get_user_by_name(name)
+        users = CSVManager.read('data/users.csv')
+        user = next((u for u in users if u['login_id'] == login_id), None)
+
         if user and user['password'] == password:
             if user['status'] == 'banned':
                 flash("이 계정은 정지되었습니다.")
@@ -32,20 +34,28 @@ def login():
 def register():
     if request.method == 'POST':
         name = request.form.get('name')
+        login_id = request.form.get('login_id')
         password = request.form.get('password')
-        birth = request.form.get('birth') # YYYYMMDD
-        school_info = request.form.get('school_info') # 학년/반
+        password_confirm = request.form.get('password_confirm')
+        birth = request.form.get('birth')
+        school_info = request.form.get('school_info')
+        phone = request.form.get('phone')
 
-        if get_user_by_name(name):
-            flash("이미 존재하는 이름입니다.")
+        if password != password_confirm:
+            flash("비밀번호가 일치하지 않습니다.")
             return redirect(url_for('auth.register'))
 
-        phone = UserUtils.generate_phone()
+        users = CSVManager.read('data/users.csv')
+        if any(u['login_id'] == login_id for u in users):
+            flash("이미 존재하는 ID입니다.")
+            return redirect(url_for('auth.register'))
+
         resident_id = UserUtils.generate_resident_id(name, school_info)
         initial_assets = CSVManager.get_config('initial_assets') or '50000'
 
         new_user = {
             'name': name,
+            'login_id': login_id,
             'password': password,
             'birth': birth,
             'grade': '준회원',
@@ -53,11 +63,11 @@ def register():
             'resident_id': resident_id,
             'school_info': school_info,
             'assets': initial_assets,
-            'status': 'pending', # Wait for admin approval for 정회원
+            'status': 'pending',
             'credit_score': '500'
         }
 
-        headers = ['name', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score']
+        headers = ['name', 'login_id', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score']
         CSVManager.append('data/users.csv', new_user, headers)
 
         # Generate ID card

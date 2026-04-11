@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>뉴 에덴 중앙은행</h2>
+<h2>{{ config_country_name }} 중앙은행</h2>
 <div class="card">
     <h3>💸 계좌 이체</h3>
     <form action="{{ url_for('bank.transfer') }}" method="POST">

@@ -27,13 +27,15 @@
         }
 
         header {
-            background-color: var(--white);
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
             padding: 15px;
             text-align: center;
-            border-bottom: 2px solid var(--primary-color);
+            border-bottom: 1px solid var(--primary-color);
             position: sticky;
             top: 0;
             z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         h1 {
@@ -154,28 +156,22 @@
 
     <nav class="bottom-nav">
         <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
-            <span class="nav-icon">🏠</span>
-            홈
+            <span class="nav-icon">🏠</span>홈
         </a>
         <a href="{{ url_for('chat.index') }}" class="nav-item {% if 'chat' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">💬</span>
-            채팅
+            <span class="nav-icon">💬</span>채팅
         </a>
         <a href="{{ url_for('politics.index') }}" class="nav-item {% if 'politics' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">⚖️</span>
-            정치
+            <span class="nav-icon">⚖️</span>정치
         </a>
         <a href="{{ url_for('games.index') }}" class="nav-item {% if 'games' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">🎮</span>
-            게임
+            <span class="nav-icon">🎮</span>게임
         </a>
         <a href="{{ url_for('mypage.index') }}" class="nav-item {% if 'mypage' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">👤</span>
-            마이페이지
+            <span class="nav-icon">👤</span>정보
         </a>
         <a href="{{ url_for('more.index') }}" class="nav-item {% if 'more' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">➕</span>
-            더보기
+            <span class="nav-icon">➕</span>더보기
         </a>
     </nav>
 

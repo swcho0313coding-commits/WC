@@ -54,10 +54,20 @@ def check_ip_block():
 # Context Processor for common variables
 @app.context_processor
 def inject_config():
+    country = CSVManager.get_config('country_name')
+    currency = CSVManager.get_config('currency_name')
     return {
-        'config_country_name': CSVManager.get_config('country_name'),
-        'config_currency_name': CSVManager.get_config('currency_name')
+        'config_country_name': country,
+        'config_currency_name': currency
     }
+
+def replace_placeholders(text):
+    if not text: return text
+    country = CSVManager.get_config('country_name')
+    currency = CSVManager.get_config('currency_name')
+    return text.replace('{국가이름}', country).replace('{화폐단위}', currency)
+
+app.jinja_env.filters['replace_placeholders'] = replace_placeholders
 
 @app.route('/')
 def index():

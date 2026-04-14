@@ -18,15 +18,15 @@ def login():
         if user and user['password'] == password:
             if user['status'] == 'banned':
                 flash("이 계정은 정지되었습니다.")
-                CSVManager.log_activity(request.remote_addr, name, "Login attempt (banned)", "fail")
+                CSVManager.log_activity(request.remote_addr, user['name'], "Login attempt (banned)", "fail")
                 return redirect(url_for('auth.login'))
 
             session['user'] = user
-            CSVManager.log_activity(request.remote_addr, name, "Login", "success")
+            CSVManager.log_activity(request.remote_addr, user['name'], "Login", "success")
             return redirect(url_for('index'))
         else:
-            flash("이름 또는 비밀번호가 틀렸습니다.")
-            CSVManager.log_activity(request.remote_addr, name, "Login attempt", "fail")
+            flash("아이디 또는 비밀번호가 틀렸습니다.")
+            CSVManager.log_activity(request.remote_addr, "unknown", f"Login attempt fail (ID: {login_id})", "fail")
 
     return render_template('auth/login.html')
 
@@ -39,7 +39,6 @@ def register():
         password_confirm = request.form.get('password_confirm')
         birth = request.form.get('birth')
         school_info = request.form.get('school_info')
-        phone = request.form.get('phone')
 
         if password != password_confirm:
             flash("비밀번호가 일치하지 않습니다.")
@@ -49,6 +48,12 @@ def register():
         if any(u['login_id'] == login_id for u in users):
             flash("이미 존재하는 ID입니다.")
             return redirect(url_for('auth.register'))
+
+        # Generate Phone (check uniqueness)
+        existing_phones = [u['phone'] for u in users]
+        phone = UserUtils.generate_phone()
+        while phone in existing_phones:
+            phone = UserUtils.generate_phone()
 
         resident_id = UserUtils.generate_resident_id(name, school_info)
         initial_assets = CSVManager.get_config('initial_assets') or '50000'
@@ -64,10 +69,11 @@ def register():
             'school_info': school_info,
             'assets': initial_assets,
             'status': 'pending',
-            'credit_score': '500'
+            'credit_score': '500',
+            'last_update_year': '0'
         }
 
-        headers = ['name', 'login_id', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score']
+        headers = ['name', 'login_id', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score', 'last_update_year']
         CSVManager.append('data/users.csv', new_user, headers)
 
         # Generate ID card

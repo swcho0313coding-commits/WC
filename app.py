@@ -1,7 +1,8 @@
-from flask import Flask, render_template, session, request
+from flask import Flask, render_template, session, request, redirect, url_for, flash
 from flask_socketio import SocketIO
 from apscheduler.schedulers.background import BackgroundScheduler
 import os
+from datetime import datetime
 from utils.csv_manager import CSVManager
 from routes.auth import auth_bp
 from routes.sns import sns_bp
@@ -18,7 +19,7 @@ from services.election import ElectionService
 from services.socket_service import setup_socket_events
 
 app = Flask(__name__)
-app.secret_key = 'super-secret-key' # In real world, use env var
+app.secret_key = 'virtual-state-secret-key'
 socketio = SocketIO(app)
 
 # Register Blueprints
@@ -38,27 +39,52 @@ setup_socket_events(socketio)
 
 # Scheduler Setup
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=EconomyService.pay_salaries, trigger="interval", weeks=1) # Weekly salaries
+scheduler.add_job(func=EconomyService.pay_salaries, trigger="interval", weeks=1)
 scheduler.add_job(func=ElectionService.transition_phases, trigger="interval", hours=1)
-scheduler.start()
 
-# IP Blocking Check
+def check_grade_update_needed(user):
+    now = datetime.now()
+    force_update = CSVManager.get_config('force_info_update') == 'true'
+    is_march_1st_or_later = (now.month >= 3 or (now.month == 3 and now.day >= 1))
+
+    val = user.get('last_update_year')
+    user_last_year = int(val) if val and str(val).isdigit() else 0
+
+    # If it's a new year's March 1st and USER hasn't updated for this year yet
+    if (now.year > user_last_year and is_march_1st_or_later) or force_update:
+        return True
+    return False
+
 @app.before_request
-def check_ip_block():
+def check_requirements():
+    if request.path.startswith('/static') or request.path.startswith('/auth'):
+        return
+
     ip = request.remote_addr
     blocks = CSVManager.read('data/ip_blocks.csv')
     for b in blocks:
         if b['ip'] == ip:
-            return f"Access Denied: Your IP ({ip}) is blocked. Reason: {b['reason']}", 403
+            return f"접속이 차단되었습니다. 사유: {b['reason']}", 403
 
-# Context Processor for common variables
+    if 'user' in session:
+        # 3월 1일 이후 첫 로그인 시 정보 수정 강제
+        if check_grade_update_needed(session['user']):
+            if not request.path.startswith('/mypage/update_info'):
+                flash("3월 1일 새 학기를 맞아 학년/반 정보를 갱신해야 합니다.")
+                return redirect(url_for('mypage.update_info'))
+
+# Context Processor
 @app.context_processor
 def inject_config():
     country = CSVManager.get_config('country_name')
     currency = CSVManager.get_config('currency_name')
+    motto = CSVManager.get_config('national_motto')
+    anthem = CSVManager.get_config('national_anthem_url')
     return {
         'config_country_name': country,
-        'config_currency_name': currency
+        'config_currency_name': currency,
+        'config_national_motto': motto,
+        'config_national_anthem': anthem
     }
 
 def replace_placeholders(text):
@@ -72,36 +98,36 @@ app.jinja_env.filters['replace_placeholders'] = replace_placeholders
 @app.route('/')
 def index():
     if 'user' not in session:
-        from flask import redirect, url_for
         return redirect(url_for('auth.login'))
 
-    # Refresh user session from CSV to catch grade changes
-    from utils.auth import get_user_by_name
-    user = get_user_by_name(session['user']['name'])
-    session['user'] = user
+    country = CSVManager.get_config('country_name')
+    users = CSVManager.read('data/users.csv')
+    for u in users:
+        u['grade'] = u['grade'].replace('{국가이름}', country)
+    user = next((u for u in users if u['login_id'] == session['user']['login_id']), None)
+    if not user:
+        session.pop('user', None)
+        return redirect(url_for('auth.login'))
 
+    session['user'] = user
     return render_template('index.html', user=user)
 
 @app.route('/survival', methods=['POST'])
 def survival():
     if 'user' not in session: return redirect(url_for('auth.login'))
-    user = session['user']['name']
+    user_name = session['user']['name']
     date = datetime.now().strftime('%Y-%m-%d')
 
-    # Check if already done today
     recs = CSVManager.read('data/attendance.csv')
-    if any(r['user'] == user and r['date'] == date for r in recs):
-        flash("이미 생존신고를 완료했습니다.")
+    if any(r['user'] == user_name and r['date'] == date for r in recs):
+        flash("이미 오늘의 생존신고를 완료했습니다.")
     else:
         CSVManager.append('data/attendance.csv',
-                          {'user': user, 'date': date, 'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')},
+                          {'user': user_name, 'date': date, 'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')},
                           ['user', 'date', 'timestamp'])
         flash("생존신고가 완료되었습니다.")
     return redirect(url_for('index'))
 
-# Placeholder routes for navigation (will be replaced by actual blueprints)
-
-
-
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=5000, allow_unsafe_werkzeug=True)
+    scheduler.start()
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)

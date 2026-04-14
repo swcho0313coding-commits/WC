@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>🃏 블랙잭</h2>
+    <div id="game-area" style="text-align:center;">
+        <p>컴퓨터 딜러와 대결하세요!</p>
+        <div style="background:#2d5a27; color:white; padding:20px; border-radius:10px; margin:10px 0;">
+            <h3>Dealer: <span id="dealer-score">?</span></h3>
+            <div id="dealer-cards"></div>
+            <hr>
+            <h3>Player: <span id="player-score">0</span></h3>
+            <div id="player-cards"></div>
+        </div>
+        <div id="controls">
+            {% if not status or status in ['win', 'lose', 'draw', 'bust'] %}
+            <form method="POST">
+                <input type="hidden" name="action" value="start">
+                <label>베팅액</label>
+                <input type="number" name="bet" value="1000" min="100">
+                <button type="submit" class="btn">게임 시작</button>
+            </form>
+            {% elif status == 'ongoing' %}
+            <div style="display:flex; gap:10px;">
+                <form method="POST" style="flex:1;">
+                    <input type="hidden" name="action" value="hit">
+                    <button type="submit" class="btn">Hit</button>
+                </form>
+                <form method="POST" style="flex:1;">
+                    <input type="hidden" name="action" value="stand">
+                    <button type="submit" class="btn btn-secondary">Stand</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if player %}
+        <div style="margin-top:20px; background:rgba(0,0,0,0.1); padding:10px; border-radius:5px;">
+            <p><strong>내 패:</strong> {{ player }} (합계: {{ player|sum }})</p>
+            <p><strong>딜러 패:</strong> {{ dealer }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

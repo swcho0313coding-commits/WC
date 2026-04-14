@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>예산안 관리</h2>
+
+<div class="card">
+    <h3>예산안 제출</h3>
+    <form method="POST">
+        <label>사업명</label>
+        <input type="text" name="title" required>
+        <label>금액 ({{ config_currency_name }})</label>
+        <input type="number" name="amount" required>
+        <label>목적 및 상세 내용</label>
+        <textarea name="purpose" required></textarea>
+        <button type="submit" class="btn">제출하기</button>
+    </form>
+</div>
+
+<h3>제출된 예산안 목록</h3>
+{% for b in budgets %}
+<div class="card">
+    <h4>{{ b.title }}</h4>
+    <p><strong>금액:</strong> {{ b.amount }} {{ config_currency_name }}</p>
+    <p><strong>제안자:</strong> {{ b.proposer }}</p>
+    <p><strong>상태:</strong> {{ b.status }}</p>
+    <p>{{ b.purpose }}</p>
+
+    {% if b.status == 'pending' and (session['user']['grade'] in ['행정 1등급', '관리자', '대통령급']) %}
+    <form action="{{ url_for('politics.approve_budget', budget_id=b.id) }}" method="POST" style="display:inline;">
+        <button type="submit" name="action" value="approve" class="btn">승인</button>
+        <button type="submit" name="action" value="reject" class="btn btn-secondary">거부</button>
+    </form>
+    {% endif %}
+</div>
+{% endfor %}
+
+{% endblock %}

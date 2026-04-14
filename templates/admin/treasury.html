@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>국고 관리</h2>
+<div class="card">
+    <p>현재 국고 잔액: <strong style="font-size:24px; color:var(--primary-blue);">{{ balance }} {{ config_currency_name }}</strong></p>
+
+    <hr style="margin:20px 0;">
+
+    <h3>예산 직접 집행 (입/출금)</h3>
+    <form action="{{ url_for('admin.treasury_manage') }}" method="POST">
+        <input type="number" name="amount" placeholder="금액 (출금 시 - 입력)" required>
+        <input type="text" name="reason" placeholder="집행 사유" required>
+        <button type="submit" class="btn">집행 완료</button>
+    </form>
+</div>
+{% endblock %}

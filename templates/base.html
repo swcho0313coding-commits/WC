@@ -3,63 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config_country_name or '정부 시스템' }}</title>
+    <title>{{ config_country_name }} 운영 시스템</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #004a99;
-            --secondary-color: #007bff;
-            --bg-color: #f8f9fa;
-            --text-color: #333;
+            --primary-blue: #0056b3;
+            --secondary-blue: #e7f1ff;
+            --accent-blue: #007bff;
+            --text-dark: #333;
+            --bg-light: #f8f9fa;
             --white: #ffffff;
-            --border-color: #dee2e6;
-            --accent-color: #0056b3;
         }
 
         body {
-            font-family: 'NanumGothic', 'Apple SD Gothic Neo', sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
             padding-bottom: 70px; /* Space for bottom nav */
-            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
 
-        header {
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 15px;
+        .header {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 15px 20px;
             text-align: center;
-            border-bottom: 1px solid var(--primary-color);
+            font-size: 1.2rem;
+            font-weight: bold;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 1.2rem;
-            color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .container {
-            padding: 15px;
+            padding: 20px;
+            flex: 1;
             max-width: 600px;
             margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .card {
             background: var(--white);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
         }
 
-        /* Bottom Navigation */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+
+        .btn:active {
+            background-color: var(--accent-blue);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        /* Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -69,123 +99,116 @@
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
-            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
             z-index: 1000;
         }
 
         .nav-item {
             text-decoration: none;
-            color: #666;
+            color: #888;
             font-size: 0.8rem;
-            text-align: center;
-            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
         }
 
         .nav-item.active {
-            color: var(--primary-color);
-            font-weight: bold;
+            color: var(--primary-blue);
         }
 
-        .nav-icon {
-            display: block;
-            font-size: 1.5rem;
-            margin-bottom: 2px;
+        /* Alert styling */
+        .flashes {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
         }
-
-        /* Button styles */
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            text-align: center;
-            cursor: pointer;
-            width: 100%;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-
-        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select, textarea {
-            width: 100%;
+        .flash {
             padding: 10px;
-            margin: 10px 0;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            box-sizing: border-box;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
 
-        .alert {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            text-align: center;
+        /* SF styling accents */
+        .sf-accent {
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 10px;
         }
-        .alert-info { background-color: #d1ecf1; color: #0c5460; }
-        .alert-danger { background-color: #f8d7da; color: #721c24; }
-
     </style>
-    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <header>
-        <h1>{{ config_country_name }} 정부 포털</h1>
-    </header>
-
-    <div id="global-alert" style="display:none; position:fixed; top:70px; left:0; right:0; background:rgba(0,74,153,0.9); color:white; padding:10px; text-align:center; z-index:2001; font-weight:bold;">
-        📢 <span id="alert-text"></span>
+    <div class="header">
+        <div>{{ config_country_name }}</div>
+        {% if config_national_motto %}
+        <div style="font-size: 0.6rem; font-weight: normal; opacity: 0.8; margin-top: 2px;">
+            {{ config_national_motto }}
+        </div>
+        {% endif %}
     </div>
 
     <div class="container">
         {% with messages = get_flashed_messages() %}
           {% if messages %}
-            {% for message in messages %}
-              <div class="alert alert-info">{{ message }}</div>
-            {% endfor %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li class="flash">{{ message }}</li>
+              {% endfor %}
+            </ul>
           {% endif %}
         {% endwith %}
 
         {% block content %}{% endblock %}
     </div>
 
-    <nav class="bottom-nav">
+    <div class="bottom-nav">
         <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
-            <span class="nav-icon">🏠</span>홈
+            <i class="fas fa-home"></i>
+            <span>홈</span>
+        </a>
+        <a href="{{ url_for('sns.index') }}" class="nav-item {% if 'sns' in request.endpoint %}active{% endif %}">
+            <i class="fas fa-users"></i>
+            <span>SNS</span>
         </a>
         <a href="{{ url_for('chat.index') }}" class="nav-item {% if 'chat' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">💬</span>채팅
+            <i class="fas fa-comments"></i>
+            <span>채팅</span>
         </a>
-        <a href="{{ url_for('politics.index') }}" class="nav-item {% if 'politics' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">⚖️</span>정치
-        </a>
-        <a href="{{ url_for('games.index') }}" class="nav-item {% if 'games' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">🎮</span>게임
+        <a href="{{ url_for('bank.index') }}" class="nav-item {% if 'bank' in request.endpoint %}active{% endif %}">
+            <i class="fas fa-university"></i>
+            <span>은행</span>
         </a>
         <a href="{{ url_for('mypage.index') }}" class="nav-item {% if 'mypage' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">👤</span>정보
+            <i class="fas fa-user"></i>
+            <span>마이페이지</span>
         </a>
-        <a href="{{ url_for('more.index') }}" class="nav-item {% if 'more' in request.endpoint %}active{% endif %}">
-            <span class="nav-icon">➕</span>더보기
+        {% if session.user and (session.user.grade == '관리자' or session.user.grade == '부관리자') %}
+        <a href="{{ url_for('admin.index') }}" class="nav-item {% if 'admin' in request.endpoint %}active{% endif %}">
+            <i class="fas fa-cog"></i>
+            <span>관리</span>
         </a>
-    </nav>
+        {% endif %}
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
-        const globalSocket = io();
-        globalSocket.on('notification', (data) => {
-            const alertBox = document.getElementById('global-alert');
-            const alertText = document.getElementById('alert-text');
-            alertText.innerText = data.msg;
-            alertBox.style.display = 'block';
-            setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
+        const socket = io();
+        socket.on('notification', function(data) {
+            alert(data.msg);
         });
+
+        // Push notification permission request logic
+        if ("Notification" in window) {
+            if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+        }
     </script>
-    {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,31 +1,46 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="card">
-    <h2>환영합니다, {{ user.name }}님!</h2>
-    <p>현재 등급: <strong>{{ user.grade }}</strong></p>
-    <p>보유 자산: <strong>{{ user.assets }} {{ config_currency_name }}</strong></p>
+<div class="card sf-accent">
+    <div style="display:flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h2 style="margin:0;">안녕하세요, {{ user.name }}님</h2>
+            <p style="color:#666; margin:5px 0;">등급: <strong>{{ user.grade }}</strong></p>
+        </div>
+        <form action="{{ url_for('survival') }}" method="POST">
+            <button type="submit" class="btn" style="width:auto; margin:0; padding:8px 15px;">생존신고</button>
+        </form>
+    </div>
 </div>
 
 <div class="card">
-    <h3>🏃 출책령 (생존신고)</h3>
-    <form action="{{ url_for('survival') }}" method="POST">
-        <button type="submit" class="btn">"생존합니다" 신고하기</button>
+    <h3>나의 자산</h3>
+    <p style="font-size:24px; font-weight:bold; color:var(--primary-blue);">{{ user.assets }} {{ config_currency_name }}</p>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <a href="{{ url_for('bank.index') }}" class="btn" style="background:#eee; color:#333;">자산 관리</a>
+        <a href="{{ url_for('games.index') }}" class="btn">게임 / 엔터테인먼트</a>
+    </div>
+</div>
+
+<div class="card">
+    <h3>국가 시스템</h3>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <a href="{{ url_for('politics.index') }}" class="btn" style="background:var(--secondary-blue); color:var(--primary-blue);"><i class="fas fa-landmark"></i> 정치 / 선거</a>
+        <a href="{{ url_for('legal.index') }}" class="btn" style="background:var(--secondary-blue); color:var(--primary-blue);"><i class="fas fa-balance-scale"></i> 법률 / 재판</a>
+        <a href="{{ url_for('more.qr_scan') }}" class="btn" style="background:var(--secondary-blue); color:var(--primary-blue);"><i class="fas fa-qrcode"></i> 신분 확인</a>
+        <a href="{{ url_for('more.weapons') }}" class="btn" style="background:var(--secondary-blue); color:var(--primary-blue);"><i class="fas fa-crosshairs"></i> 국방 / 무기</a>
+    </div>
+</div>
+
+{% if session.user.grade == '관리자' %}
+<div class="card" style="border: 2px solid #ffa500;">
+    <h3>관리자 긴급 공지</h3>
+    <form action="{{ url_for('admin.emergency') }}" method="GET">
+        <button class="btn" style="background:#ffa500;">비상사태 제어판</button>
     </form>
 </div>
+{% endif %}
 
-<div class="card">
-    <h3>📢 최근 공지</h3>
-    <p>아직 새로운 공지가 없습니다.</p>
-</div>
-
-<div class="card">
-    <h3>⚖️ 주요 국정 소식</h3>
-    <p>평화로운 하루입니다.</p>
-</div>
-
-<div class="card">
-    <h3>🏦 금융 서비스</h3>
-    <a href="{{ url_for('bank.index') }}" class="btn">은행 서비스 이용하기</a>
+<div style="text-align:center; margin-top:20px;">
+    <a href="{{ url_for('auth.logout') }}" style="color:#999; text-decoration:none;">로그아웃</a>
 </div>
 {% endblock %}

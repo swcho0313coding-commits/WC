@@ -1,2 +1,9 @@
-﻿name,password,birth,grade,phone,resident_id,school_info,assets,status,credit_score
-관리자,admin123,19900101,관리자,0000,900101-1000000,본부,999999999999,active,1000
+﻿name,login_id,password,birth,grade,phone,resident_id,school_info,assets,status,credit_score,last_update_year
+관리자,관리자,admin123,19900101,관리자,0000,KR-본부-0-관리자,본부,999999999999,active,1000,2026
+테스터,tester2,password,19900101,국민 9등급,1471,KR-테스트고-1-2-테스터,테스트고 1-2,150000,active,500,2026
+테스터,tester_final,password,19900101,준회원,01*9,KR-테스트고-1-1-테스터,테스트고 1-1,50000,pending,500,0
+최종테스터,final_tester,password,19900101,국민 9등급,9#*3,KR-테스트학교-1학년-최종테스터,테스트학교 1학년 2반,300000,active,500,2026
+최종테스터,final_tester2,password,19900101,준회원,8*68,KR-테스트학교-1학년-최종테스터,테스트학교 1학년 1반,50000,pending,500,0
+최종테스터,final_tester3,password,19900101,준회원,2663,KR-테스트학교-1학년-최종테스터,테스트학교 1학년 1반,50000,pending,500,0
+최종테스터,final_tester_v6,password,19900101,준회원,45#*,KR-테스트학교-1학년-최종테스터,테스트학교 1학년 1반,50000,pending,500,0
+최종테스터,final_tester_v7,password,19900101,준회원,0*38,KR-테스트학교-1학년-최종테스터,테스트학교 1학년 1반,50000,pending,500,0

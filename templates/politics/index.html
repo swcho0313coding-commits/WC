@@ -51,6 +51,12 @@
 </div>
 
 <div class="card">
+    <h3>💰 예산안 심의</h3>
+    <p>국가 예산안을 제안하고 승인합니다.</p>
+    <a href="{{ url_for('politics.budget') }}" class="btn">예산 페이지로</a>
+</div>
+
+<div class="card">
     <h3>🚫 탄핵 심판</h3>
     <form action="{{ url_for('politics.vote_impeachment') }}" method="POST">
         <button type="submit" name="vote" value="for" class="btn alert-danger" style="color:white">탄핵 찬성</button>

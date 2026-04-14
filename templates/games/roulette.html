@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>🎡 룰렛</h2>
+    <form method="POST">
+        <label>베팅액</label>
+        <input type="number" name="bet" value="1000" min="100">
+
+        <label>베팅 대상</label>
+        <select name="target">
+            <option value="red">빨강 (Red)</option>
+            <option value="black">검정 (Black)</option>
+            <option value="even">짝수 (Even)</option>
+            <option value="odd">홀수 (Odd)</option>
+            {% for i in range(37) %}
+            <option value="{{ i }}">{{ i }}번</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn" style="margin-top:10px;">베팅하기</button>
+    </form>
+</div>
+{% endblock %}

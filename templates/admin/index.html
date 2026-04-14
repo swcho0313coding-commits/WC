@@ -1,39 +1,41 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h2>관리자 패널</h2>
-
 <div class="card">
-    <h3>📊 시스템 요약</h3>
-    <p>국가명: {{ config_country_name }}</p>
-    <p>화폐단위: {{ config_currency_name }}</p>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px">
-        <div style="background:#f0f7ff; padding:10px; border-radius:5px">
-            <small>총 회원수</small><br><strong>{{ stats.user_count }}</strong>
+    <h2>관리자 대시보드</h2>
+    <div class="stats-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
+        <div class="card" style="background:#eefaff; text-align:center;">
+            <h3>회원 수</h3>
+            <p style="font-size:24px; font-weight:bold;">{{ stats.user_count }} 명</p>
         </div>
-        <div style="background:#f0f7ff; padding:10px; border-radius:5px">
-            <small>국고 잔고</small><br><strong>{{ stats.treasury_balance }}</strong>
+        <div class="card" style="background:#eefaff; text-align:center;">
+            <h3>국고 잔액</h3>
+            <p style="font-size:24px; font-weight:bold;">{{ stats.treasury_balance }} {{ config_currency_name }}</p>
         </div>
-        <div style="background:#f0f7ff; padding:10px; border-radius:5px">
-            <small>진행중인 재판</small><br><strong>{{ stats.active_trials }}</strong>
+        <div class="card" style="background:#eefaff; text-align:center;">
+            <h3>활성 재판</h3>
+            <p style="font-size:24px; font-weight:bold;">{{ stats.active_trials }} 건</p>
         </div>
-        <div style="background:#f0f7ff; padding:10px; border-radius:5px">
-            <small>선거 진행중</small><br><strong>{{ '예' if stats.active_election else '아니오' }}</strong>
+        <div class="card" style="background:#eefaff; text-align:center;">
+            <h3>선거 상태</h3>
+            <p style="font-size:18px;">{% if stats.active_election %}진행 중{% else %}대기{% endif %}</p>
         </div>
     </div>
-</div>
 
-<div class="card">
-    <h3>🛠️ 관리 도구</h3>
-    <a href="{{ url_for('admin.manage_users') }}" class="btn">회원 관리 및 승인</a>
-    <a href="{{ url_for('admin.ban_management') }}" class="btn alert-danger" style="margin-top:10px; color:white">벌점 200점 승인 큐</a>
-    <a href="{{ url_for('admin.csv_editor') }}" class="btn btn-secondary" style="margin-top:10px">CSV 테이블 에디터</a>
-    <a href="{{ url_for('admin.emergency') }}" class="btn alert-danger" style="margin-top:10px; color:white">비상사태 관리</a>
-    <a href="{{ url_for('admin.award_medal') }}" class="btn btn-secondary" style="margin-top:10px">훈장/포상 수여</a>
-</div>
+    <div class="menu-list">
+        <a href="{{ url_for('admin.manage_users') }}" class="btn" style="margin-bottom:10px;">회원 관리 (승인/삭제/정지)</a>
+        <a href="{{ url_for('admin.csv_editor') }}" class="btn" style="margin-bottom:10px;">CSV 데이터 에디터</a>
+        <a href="{{ url_for('admin.law_editor') }}" class="btn" style="margin-bottom:10px;">성문법(Law) 에디터</a>
+        <a href="{{ url_for('admin.view_logs') }}" class="btn" style="margin-bottom:10px;">시스템 활동 로그 조회</a>
+        <a href="{{ url_for('admin.manage_ip_blocks') }}" class="btn" style="margin-bottom:10px;">IP 차단 관리</a>
+        <a href="{{ url_for('admin.treasury_manage') }}" class="btn" style="margin-bottom:10px;">국고 관리 / 예산 집행</a>
+        <a href="{{ url_for('admin.emergency') }}" class="btn" style="margin-bottom:10px; background:#ff4d4d;">비상사태 / 계엄령 설정</a>
+        <a href="{{ url_for('admin.award_medal') }}" class="btn" style="margin-bottom:10px;">훈장/표창 수여</a>
+        <a href="{{ url_for('admin.ban_management') }}" class="btn" style="margin-bottom:10px; background:#666;">벌점 200점 승인 큐</a>
+        <a href="{{ url_for('admin.pay_salaries_manual') }}" class="btn" style="margin-bottom:10px; background:#28a745;">주급 수동 지급 실행</a>
 
-<div class="card">
-    <h3>📝 로그 뷰어</h3>
-    <a href="#" class="btn btn-secondary">시스템 로그 조회</a>
+        <form action="{{ url_for('admin.force_grade_update') }}" method="GET" style="margin-top:20px;">
+            <button type="submit" class="btn" style="background:#ffa500;">전체 학년/반 정보 갱신 강제</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

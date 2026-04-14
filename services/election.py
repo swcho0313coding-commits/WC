@@ -79,7 +79,7 @@ class ElectionService:
                 if u['name'] == winner:
                     u['grade'] = '대통령급'
 
-            CSVManager.write('data/users.csv', users, ['name', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score'])
+            CSVManager.write('data/users.csv', users, ['name', 'login_id', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score', 'last_update_year'])
 
             # Log history
             history = {

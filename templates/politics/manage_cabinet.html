@@ -1,21 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>내각 관리 (대통령 전용)</h2>
+<h2>내각 관리</h2>
 <div class="card">
-    <form method="POST">
-        <label>대상 국민 이름</label>
-        <input type="text" name="user" required>
-        <label>임명 직책</label>
-        <select name="position">
-            <option value="국무총리급">국무총리</option>
-            <option value="부총리">부총리</option>
-            <option value="행정안전부장관">행정안전부장관</option>
-            <option value="재정경제부장관">재정경제부장관</option>
-            <option value="국방부장관">국방부장관</option>
-            <option value="법무부장관">법무부장관</option>
-            <option value="외교부장관">외교부장관</option>
-            <option value="교육부장관">교육부장관</option>
+    <form action="{{ url_for('politics.appoint_cabinet') }}" method="POST">
+        <label>임명 대상 사용자</label>
+        <select name="user">
+            {% for u in users %}
+            <option value="{{ u.name }}">{{ u.name }} (현재: {{ u.grade }})</option>
+            {% endfor %}
         </select>
+
+        <label>지명 직급</label>
+        <select name="grade">
+            <option value="국무총리급">국무총리</option>
+            <option value="행정 1등급">행정 1등급</option>
+            <option value="입법 1등급">입법 1등급</option>
+            <option value="사법 1등급">사법 1등급</option>
+            <option value="행정 2등급">행정 2등급</option>
+            <option value="입법 2등급">입법 2등급</option>
+            <option value="사법 2등급">사법 2등급</option>
+        </select>
+
         <button type="submit" class="btn">임명하기</button>
     </form>
 </div>

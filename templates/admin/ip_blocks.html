@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>IP 차단 관리</h2>
+<div class="card">
+    <form action="{{ url_for('admin.manage_ip_blocks') }}" method="POST">
+        <input type="text" name="ip" placeholder="차단할 IP (예: 127.0.0.1)" required>
+        <input type="text" name="reason" placeholder="차단 사유" required>
+        <button type="submit" class="btn" style="background:#ff4d4d;">IP 차단</button>
+    </form>
+</div>
+
+<div class="card" style="margin-top:20px;">
+    <h3>차단된 IP 목록</h3>
+    <table style="width:100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background:#f4f4f4">
+                <th style="border:1px solid #ddd; padding:8px">IP</th>
+                <th style="border:1px solid #ddd; padding:8px">사유</th>
+                <th style="border:1px solid #ddd; padding:8px">관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for block in blocks %}
+            <tr>
+                <td style="border:1px solid #ddd; padding:8px">{{ block.ip }}</td>
+                <td style="border:1px solid #ddd; padding:8px">{{ block.reason }}</td>
+                <td style="border:1px solid #ddd; padding:8px">
+                    <a href="{{ url_for('admin.unblock_ip', ip=block.ip) }}" class="btn" style="padding:5px; width:auto">해제</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

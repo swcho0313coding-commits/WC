@@ -21,11 +21,14 @@ def weapons():
     if request.method == 'POST':
         target = request.form.get('target')
         weapon = request.form.get('weapon')
-        # Permissions check (Security or Military)
 
-        # Mute duration mapping
-        durations = {'revolver': 24, 'howitzer': 48, 'sniper': 72, 'icbm': 9999}
-        hours = durations.get(weapon, 12)
+        # Load weapon config
+        configs = CSVManager.read('data/weapons_config.csv')
+        w_conf = next((c for c in configs if c['weapon'] == weapon), {'mute_hours': '12', 'death_hits': '0'})
+
+        hours = int(w_conf['mute_hours'])
+        death_limit = int(w_conf['death_hits'])
+
         expire_at = (datetime.now() + timedelta(hours=hours)).strftime('%Y-%m-%d %H:%M:%S')
 
         new_hit = {
@@ -36,6 +39,23 @@ def weapons():
             'expire_at': expire_at
         }
         CSVManager.append('data/weapon_hits.csv', new_hit, ['target', 'weapon', 'attacker', 'timestamp', 'expire_at'])
-        flash(f"{target}에게 {weapon}(을)를 발사하였습니다!")
+
+        # Check death (force exit) logic
+        hits = CSVManager.read('data/weapon_hits.csv')
+        # Filter for recent hits (within a week as per Military Act Art 46)
+        one_week_ago = datetime.now() - timedelta(days=7)
+        user_hits = [h for h in hits if h['target'] == target and h['weapon'] == weapon and datetime.strptime(h['timestamp'], '%Y-%m-%d %H:%M:%S') > one_week_ago]
+
+        if death_limit > 0 and len(user_hits) >= death_limit:
+            # Kill user (status -> deleted)
+            users = CSVManager.read('data/users.csv')
+            for u in users:
+                if u['name'] == target:
+                    u['status'] = 'deleted'
+                    flash(f"{target}님이 {weapon}에 의해 전사(강제퇴장)하셨습니다.")
+                    break
+            CSVManager.write('data/users.csv', users, ['name', 'login_id', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score', 'last_update_year'])
+        else:
+            flash(f"{target}에게 {weapon}(을)를 발사하였습니다! ({hours}시간 발언 금지)")
 
     return render_template('more/weapons.html')

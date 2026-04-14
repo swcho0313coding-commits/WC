@@ -1,4 +1,52 @@
 ﻿timestamp,ip,user,action,status
-2026-04-10 11:45:20,127.0.0.1,관리자,Login,success
-2026-04-10 11:53:26,127.0.0.1,관리자,Login,success
-2026-04-10 12:43:10,127.0.0.1,관리자,Login,success
+2026-04-12 11:12:02,127.0.0.1,테스터,Register,success
+2026-04-12 11:12:03,127.0.0.1,관리자,Login,success
+2026-04-12 11:12:03,127.0.0.1,관리자,Approved user 테스터,success
+2026-04-12 11:12:03,127.0.0.1,관리자,Logout,success
+2026-04-12 11:12:03,127.0.0.1,테스터,Login,success
+2026-04-12 11:12:04,127.0.0.1,테스터,Updated School Info,success
+2026-04-12 11:16:29,127.0.0.1,테스터,Register,success
+2026-04-12 11:16:29,127.0.0.1,관리자,Login,success
+2026-04-12 11:16:29,127.0.0.1,관리자,Approved user 테스터,success
+2026-04-12 11:16:29,127.0.0.1,관리자,Logout,success
+2026-04-12 11:16:30,127.0.0.1,테스터,Login,success
+2026-04-12 11:16:30,127.0.0.1,테스터,Updated School Info,success
+2026-04-12 11:22:25,127.0.0.1,테스터,Register,success
+2026-04-12 11:22:26,127.0.0.1,관리자,Login,success
+2026-04-12 11:22:29,127.0.0.1,관리자,Approved user 테스터,success
+2026-04-12 11:22:30,127.0.0.1,관리자,Logout,success
+2026-04-12 11:22:30,127.0.0.1,테스터,Login,success
+2026-04-12 11:22:31,127.0.0.1,테스터,Updated School Info,success
+2026-04-12 11:46:14,127.0.0.1,관리자,Login,success
+2026-04-12 11:46:15,127.0.0.1,관리자,Logout,success
+2026-04-12 11:46:15,127.0.0.1,테스터,Login,success
+2026-04-14 12:28:05,127.0.0.1,최종테스터,Register,success
+2026-04-14 12:28:05,127.0.0.1,관리자,Login,success
+2026-04-14 12:28:06,127.0.0.1,관리자,Approved user 최종테스터,success
+2026-04-14 12:28:06,127.0.0.1,관리자,Logout,success
+2026-04-14 12:28:06,127.0.0.1,최종테스터,Login,success
+2026-04-14 12:28:07,127.0.0.1,최종테스터,Updated School Info,success
+2026-04-14 12:30:06,127.0.0.1,최종테스터,Register,success
+2026-04-14 12:30:06,127.0.0.1,관리자,Login,success
+2026-04-14 12:30:06,127.0.0.1,관리자,Approved user 최종테스터,success
+2026-04-14 12:30:06,127.0.0.1,관리자,Logout,success
+2026-04-14 12:30:07,127.0.0.1,최종테스터,Login,success
+2026-04-14 12:30:07,127.0.0.1,최종테스터,Updated School Info,success
+2026-04-14 12:31:56,127.0.0.1,최종테스터,Register,success
+2026-04-14 12:31:56,127.0.0.1,관리자,Login,success
+2026-04-14 12:31:56,127.0.0.1,관리자,Approved user 최종테스터,success
+2026-04-14 12:31:56,127.0.0.1,관리자,Logout,success
+2026-04-14 12:31:56,127.0.0.1,최종테스터,Login,success
+2026-04-14 12:31:57,127.0.0.1,최종테스터,Updated School Info,success
+2026-04-14 12:33:56,127.0.0.1,최종테스터,Register,success
+2026-04-14 12:33:56,127.0.0.1,관리자,Login,success
+2026-04-14 12:33:57,127.0.0.1,관리자,Approved user 최종테스터,success
+2026-04-14 12:33:57,127.0.0.1,관리자,Logout,success
+2026-04-14 12:33:57,127.0.0.1,최종테스터,Login,success
+2026-04-14 12:33:58,127.0.0.1,최종테스터,Updated School Info,success
+2026-04-14 12:38:39,127.0.0.1,최종테스터,Register,success
+2026-04-14 12:38:39,127.0.0.1,관리자,Login,success
+2026-04-14 12:38:39,127.0.0.1,관리자,Approved user 최종테스터,success
+2026-04-14 12:38:39,127.0.0.1,관리자,Logout,success
+2026-04-14 12:38:40,127.0.0.1,최종테스터,Login,success
+2026-04-14 12:38:40,127.0.0.1,최종테스터,Updated School Info,success

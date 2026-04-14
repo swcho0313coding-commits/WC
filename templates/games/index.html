@@ -3,6 +3,12 @@
 {% block content %}
 <h2>{{ config_country_name }} 오락실</h2>
 
+<div class="card" style="border: 2px solid gold; background: #fffcf0;">
+    <h3>🎲 멀티 주사위 배틀</h3>
+    <p>다른 국민과 실시간으로 승부하고 자산을 뺏으세요!</p>
+    <a href="{{ url_for('games.dice_battle') }}" class="btn">대결 신청하기</a>
+</div>
+
 <div class="card">
     <h3>✊ 가위바위보</h3>
     <p>컴퓨터를 이기고 베팅액의 2배를 획득하세요!</p>

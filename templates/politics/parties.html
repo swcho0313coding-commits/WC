@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>정당 목록</h2>
+<div class="card">
+    {% for p in parties %}
+    <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px">
+        <h3>{{ p.name }}</h3>
+        <p><strong>대표:</strong> {{ p.founder }}</p>
+        <p><strong>설명:</strong> {{ p.description }}</p>
+        <p><strong>상태:</strong> {{ p.status }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

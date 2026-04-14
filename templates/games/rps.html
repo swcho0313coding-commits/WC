@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>가위바위보</h2>
+    <form method="POST">
+        <label>베팅액</label>
+        <input type="number" name="bet" value="1000" min="100">
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button type="submit" name="choice" value="rock" class="btn">바위</button>
+            <button type="submit" name="choice" value="paper" class="btn">보</button>
+            <button type="submit" name="choice" value="scissors" class="btn">가위</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

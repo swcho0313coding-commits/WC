@@ -32,7 +32,7 @@ class EconomyService:
                 break
 
         if updated:
-            headers = ['name', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score']
+            headers = ['name', 'login_id', 'password', 'birth', 'grade', 'phone', 'resident_id', 'school_info', 'assets', 'status', 'credit_score', 'last_update_year']
             CSVManager.write('data/users.csv', users, headers)
 
             # Record transaction

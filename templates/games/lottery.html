@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>🎫 국가 복권</h2>
+    <p>판매가: {{ lottery_price }} {{ config_currency_name }}</p>
+
+    <form method="POST">
+        <button type="submit" class="btn">복권 구매하기 (자동 번호)</button>
+    </form>
+
+    <h3 style="margin-top:20px;">나의 구매 내역</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>일시</th>
+                <th>번호</th>
+                <th>상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in tickets %}
+            <tr>
+                <td>{{ t.timestamp }}</td>
+                <td>{{ t.numbers }}</td>
+                <td>{{ t.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

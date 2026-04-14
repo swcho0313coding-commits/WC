@@ -1,8 +1,9 @@
-﻿grade,permissions
+grade,permissions
 관리자,all
 부관리자,"view_logs,view_csv,edit_csv,delete_user,ban_user,unlimited_money,global_notice,penalty_all,seize_assets,set_grade,view_treasury,view_all_chat"
 보안 0등급,"global_notice,ban_user,penalty_add,seize_assets,election_supervise,report_election_fraud,declare_emergency,court_second_approve"
 대통령급,"global_notice,appoint_cabinet,dismiss_cabinet,approve_budget,declare_emergency,use_emergency_fund"
 국무총리급,"deputize_president,convene_cabinet,suggest_budget"
-정회원,"chat,post_sns,join_party,vote_election,apply_prosecution"
+국민 9등급,"chat,post_sns,join_party,vote_election,apply_prosecution,politics"
+정회원,"chat,post_sns,join_party,vote_election,apply_prosecution,politics"
 준회원,chat

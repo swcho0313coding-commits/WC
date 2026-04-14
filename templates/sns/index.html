@@ -76,7 +76,7 @@
         <h3>새 게시물 작성</h3>
         <form action="{{ url_for('sns.create_post') }}" method="POST" enctype="multipart/form-data">
             <textarea name="content" placeholder="무슨 생각을 하고 계신가요?" required></textarea>
-            <input type="file" name="image" accept="image/*">
+            <input type="file" name="file" accept="image/*">
             <button type="submit" class="btn">게시</button>
             <button type="button" class="btn btn-secondary" style="margin-top:5px" onclick="document.getElementById('postModal').style.display='none'">취소</button>
         </form>
@@ -86,30 +86,33 @@
 {% for post in posts %}
 <div class="sns-post">
     <div class="post-header">
-        {{ post.author }}
+        {{ post.user }} ({{ post.grade }})
     </div>
-    {% if post.image_path %}
+    {% if post.image %}
     <div class="post-image">
-        <img src="{{ url_for('static', filename=post.image_path) }}" alt="Post image">
+        <img src="{{ url_for('static', filename=post.image) }}" alt="Post image">
     </div>
     {% endif %}
     <div class="post-content">
         {{ post.content }}
     </div>
     <div class="post-actions">
-        <a href="{{ url_for('sns.like_post', post_id=post.id) }}" style="text-decoration:none">
-            {% if post.is_liked %}❤️{% else %}🤍{% endif %} {{ post.likes_count }}
+        <a href="{{ url_for('sns.like', post_id=post.id) }}" style="text-decoration:none">
+             ❤️ {{ post.likes }}
         </a>
     </div>
+
     <div class="post-comments">
         {% for comment in post.comments %}
         <div class="comment-item">
-            <span class="comment-author">{{ comment.author }}</span> {{ comment.content }}
+            <span class="comment-author">{{ comment.user }} ({{ comment.grade }}):</span>
+            {{ comment.content }}
         </div>
         {% endfor %}
-        <form action="{{ url_for('sns.add_comment', post_id=post.id) }}" method="POST" style="display:flex; margin-top:10px">
-            <input type="text" name="content" placeholder="댓글 달기..." required style="margin:0; flex:1">
-            <button type="submit" class="btn" style="width:auto; margin-left:5px">전송</button>
+
+        <form action="{{ url_for('sns.comment', post_id=post.id) }}" method="POST" style="margin-top:10px; display:flex; gap:5px;">
+            <input type="text" name="content" placeholder="댓글을 입력하세요..." required style="flex:1; font-size:0.8rem;">
+            <button type="submit" class="btn btn-sm" style="padding: 2px 8px;">등록</button>
         </form>
     </div>
 </div>

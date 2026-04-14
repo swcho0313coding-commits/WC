@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>💎 가챠 (뽑기)</h2>
+    <p>1회: 5,000 {{ config_currency_name }}</p>
+
+    <div style="display:flex; gap:10px;">
+        <form method="POST" style="flex:1;">
+            <button type="submit" class="btn">1회 뽑기</button>
+        </form>
+        <form method="POST" style="flex:1;">
+            <button type="button" class="btn btn-secondary" onclick="alert('준비 중입니다.')">10회 뽑기 (할인)</button>
+        </form>
+    </div>
+
+    <div style="margin-top:20px;">
+        <h3>확률 정보</h3>
+        <ul>
+            <li>SS등급: 1%</li>
+            <li>S등급: 5%</li>
+            <li>A등급: 15%</li>
+            <li>B등급: 30%</li>
+            <li>C등급: 49%</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

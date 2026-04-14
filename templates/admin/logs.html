@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>시스템 활동 로그</h2>
+<div class="card" style="overflow-x:auto">
+    <table style="width:100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background:#f4f4f4">
+                <th style="border:1px solid #ddd; padding:8px">시간</th>
+                <th style="border:1px solid #ddd; padding:8px">IP</th>
+                <th style="border:1px solid #ddd; padding:8px">사용자</th>
+                <th style="border:1px solid #ddd; padding:8px">행동</th>
+                <th style="border:1px solid #ddd; padding:8px">상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td style="border:1px solid #ddd; padding:8px">{{ log.timestamp }}</td>
+                <td style="border:1px solid #ddd; padding:8px">{{ log.ip }}</td>
+                <td style="border:1px solid #ddd; padding:8px">{{ log.user }}</td>
+                <td style="border:1px solid #ddd; padding:8px">{{ log.action }}</td>
+                <td style="border:1px solid #ddd; padding:8px">{{ log.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -88,20 +88,20 @@
     function sendMessage() {
         const input = document.getElementById('msg-input');
         if(input.value.trim()) {
-            socket.emit('message', {room: roomId, message: input.value});
+            socket.emit('send_message', {room: roomId, msg: input.value});
             input.value = '';
         }
     }
 
-    socket.on('message', (data) => {
+    socket.on('receive_message', (data) => {
         const div = document.createElement('div');
         div.className = `msg ${data.sender === myName ? 'me' : 'other'}`;
 
         let html = '';
         if(data.sender !== myName) {
-            html += `<div class="msg-sender">${data.sender}</div>`;
+            html += `<div class="msg-sender">${data.sender} (${data.grade})</div>`;
         }
-        html += `<div class="msg-text">${data.content}</div>`;
+        html += `<div class="msg-text">${data.msg}</div>`;
         html += `<div class="msg-time">${data.timestamp}</div>`;
 
         div.innerHTML = html;

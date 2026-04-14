@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="text-align:center;">
+    <h2>가위바위보 결과</h2>
+    <div style="font-size:3rem; margin:20px 0;">
+        나: {{ user }} vs 컴퓨터: {{ cpu }}
+    </div>
+
+    {% if result == 'win' %}
+    <h3 style="color:var(--success-color);">승리! {{ bet * 2 }} 획득</h3>
+    {% elif result == 'draw' %}
+    <h3 style="color:var(--warning-color);">무승부! 베팅액 반환</h3>
+    {% else %}
+    <h3 style="color:var(--error-color);">패배... 베팅액 몰수</h3>
+    {% endif %}
+
+    <a href="{{ url_for('games.rps') }}" class="btn">다시 하기</a>
+</div>
+{% endblock %}

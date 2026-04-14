@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>학년/반 정보 업데이트</h2>
+    <p>3월 1일 새 학기를 맞아 정보를 갱신해야 합니다.</p>
+    <form action="{{ url_for('mypage.update_info') }}" method="POST">
+        <div style="margin-bottom:15px;">
+            <label>학년/반 정보</label>
+            <input type="text" name="school_info" value="{{ session.user.school_info }}" required>
+        </div>
+        <button type="submit" class="btn">업데이트 완료</button>
+    </form>
+</div>
+{% endblock %}

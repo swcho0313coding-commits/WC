@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>성문법 관리</h2>
+<div class="card">
+    {% for f in files %}
+    <div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px">
+        <strong>{{ f }}</strong>
+        <a href="{{ url_for('admin.edit_law', filename=f) }}" class="btn btn-sm" style="display:inline; width:auto; margin-left:10px">수정</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

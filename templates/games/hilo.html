@@ -2,15 +2,14 @@
 {% block content %}
 <div class="card">
     <h2>하이로우</h2>
-    <p>현재 카드: <strong style="font-size:2rem">{{ current_card }}</strong></p>
-    <p>다음 카드가 현재 카드보다 높을까요, 낮을까요?</p>
+    <p>현재 카드: <strong style="font-size:2rem;">{{ card }}</strong></p>
     <form method="POST">
-        <input type="hidden" name="current_card" value="{{ current_card }}">
+        <input type="hidden" name="current_card" value="{{ card }}">
         <label>베팅액</label>
         <input type="number" name="bet" value="1000" min="100">
-        <div style="display:flex; gap:10px">
-            <button type="submit" name="guess" value="hi" class="btn">높음 (HI)</button>
-            <button type="submit" name="guess" value="lo" class="btn btn-secondary">낮음 (LO)</button>
+        <div style="display:flex; gap:10px;">
+            <button type="submit" name="guess" value="higher" class="btn">더 높은 수 (Higher)</button>
+            <button type="submit" name="guess" value="lower" class="btn btn-secondary">더 낮은 수 (Lower)</button>
         </div>
     </form>
 </div>

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>멀티플레이어 주사위 배틀</h2>
+    <p>다른 국민에게 도전하여 자산을 쟁취하세요!</p>
+
+    <div id="battle-lobby">
+        <h3>대기 중인 도전자</h3>
+        <ul id="challenge-list" style="list-style:none; padding:0;">
+            <!-- Dynamic challenge list -->
+        </ul>
+        <button onclick="createChallenge()" class="btn">새로운 도전 만들기 (베팅 10,000)</button>
+    </div>
+
+    <div id="battle-arena" style="display:none; text-align:center;">
+        <h3 id="battle-status">배틀 진행 중...</h3>
+        <div style="display:flex; justify-content:space-around; margin:20px 0;">
+            <div>
+                <p id="p1-name">나</p>
+                <div id="p1-dice" style="font-size:3rem;">?</div>
+            </div>
+            <div style="font-size:2rem; align-self:center;">VS</div>
+            <div>
+                <p id="p2-name">상대</p>
+                <div id="p2-dice" style="font-size:3rem;">?</div>
+            </div>
+        </div>
+        <div id="battle-result" style="font-weight:bold; font-size:1.5rem; margin-top:10px;"></div>
+        <button onclick="leaveArena()" class="btn" id="leave-btn" style="display:none;">로비로 돌아가기</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    const socket = io();
+    let currentRoom = null;
+
+    socket.on('dice_lobby_update', function(challenges) {
+        const list = document.getElementById('challenge-list');
+        list.innerHTML = '';
+        challenges.forEach(c => {
+            if (c.status === 'waiting') {
+                const li = document.createElement('li');
+                li.className = 'card';
+                li.style.display = 'flex';
+                li.style.justifyContent = 'space-between';
+                li.style.alignItems = 'center';
+                li.innerHTML = `
+                    <span>${c.creator}님의 도전 (${c.bet} {{ config_currency_name }})</span>
+                    <button onclick="joinChallenge('${c.id}')" class="btn" style="width:auto; margin:0;">수락</button>
+                `;
+                list.appendChild(li);
+            }
+        });
+    });
+
+    socket.on('dice_battle_start', function(data) {
+        document.getElementById('battle-lobby').style.display = 'none';
+        document.getElementById('battle-arena').style.display = 'block';
+        document.getElementById('p1-name').innerText = data.p1;
+        document.getElementById('p2-name').innerText = data.p2;
+        document.getElementById('battle-status').innerText = '배틀 시작! 주사위를 굴립니다...';
+        currentRoom = data.room;
+    });
+
+    socket.on('dice_battle_result', function(data) {
+        document.getElementById('p1-dice').innerText = data.p1_roll;
+        document.getElementById('p2-dice').innerText = data.p2_roll;
+        document.getElementById('battle-result').innerText = data.winner === 'draw' ? '무승부!' : data.winner + '님의 승리!';
+        document.getElementById('leave-btn').style.display = 'block';
+    });
+
+    function createChallenge() {
+        socket.emit('dice_create_challenge', {bet: 10000});
+    }
+
+    function joinChallenge(id) {
+        socket.emit('dice_join_challenge', {challenge_id: id});
+    }
+
+    function leaveArena() {
+        document.getElementById('battle-lobby').style.display = 'block';
+        document.getElementById('battle-arena').style.display = 'none';
+        document.getElementById('leave-btn').style.display = 'none';
+        document.getElementById('p1-dice').innerText = '?';
+        document.getElementById('p2-dice').innerText = '?';
+        document.getElementById('battle-result').innerText = '';
+    }
+</script>
+{% endblock %}

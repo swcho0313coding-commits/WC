@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>법안 수정: {{ filename }}</h2>
+<form method="POST">
+    <textarea name="content" style="height:400px; font-family:monospace;">{{ content }}</textarea>
+    <button type="submit" class="btn">저장하기</button>
+    <a href="{{ url_for('admin.law_editor') }}" class="btn btn-secondary" style="margin-top:5px">취소</a>
+</form>
+{% endblock %}

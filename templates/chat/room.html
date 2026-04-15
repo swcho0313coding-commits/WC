@@ -2,73 +2,123 @@
 
 {% block extra_css %}
 <style>
-    #chat-box {
-        height: 400px;
-        overflow-y: auto;
-        border: 1px solid var(--border-color);
-        background: white;
-        border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 10px;
+    .kakaotalk-chat-bg {
+        background: #bacee0;
+        min-height: calc(100vh - 120px);
         display: flex;
         flex-direction: column;
     }
-    .msg {
-        margin-bottom: 10px;
-        max-width: 80%;
+    #chat-box {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    .msg-wrapper {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+    .msg-wrapper.me {
+        align-items: flex-end;
+    }
+    .msg-wrapper.other {
+        align-items: flex-start;
+    }
+    .msg-bubble {
+        max-width: 75%;
         padding: 8px 12px;
-        border-radius: 15px;
+        border-radius: 8px;
+        font-size: 0.95rem;
         position: relative;
     }
-    .msg.me {
-        align-self: flex-end;
-        background-color: var(--primary-color);
-        color: white;
-        border-bottom-right-radius: 2px;
+    .me .msg-bubble {
+        background: #fee500;
+        color: #333;
     }
-    .msg.other {
-        align-self: flex-start;
-        background-color: #e9ecef;
-        color: var(--text-color);
-        border-bottom-left-radius: 2px;
+    .other .msg-bubble {
+        background: white;
+        color: #333;
     }
     .msg-sender {
-        font-size: 0.7rem;
-        margin-bottom: 2px;
-        color: #666;
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+        color: #555;
+    }
+    .msg-footer {
+        display: flex;
+        align-items: flex-end;
+        gap: 5px;
+        margin-top: 2px;
     }
     .msg-time {
-        font-size: 0.6rem;
-        margin-top: 2px;
-        opacity: 0.7;
-        text-align: right;
+        font-size: 0.65rem;
+        color: #777;
+    }
+
+    .chat-input-area {
+        background: white;
+        padding: 10px;
+        display: flex;
+        gap: 10px;
+        position: sticky;
+        bottom: 0;
+    }
+    #msg-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 8px 15px;
+        outline: none;
+        margin: 0;
+    }
+    #send-btn {
+        background: #fee500;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #333;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div style="display:flex; align-items:center; margin-bottom:10px">
-    <a href="{{ url_for('chat.index') }}" style="text-decoration:none; margin-right:10px">🔙</a>
-    <h2 style="margin:0">{{ room.name }}</h2>
+<div class="chat-header" style="background:#bacee0; padding: 10px 20px; display:flex; align-items:center;">
+    <a href="{{ url_for('chat.index') }}" style="color:#333; margin-right:15px;"><i class="fas fa-chevron-left"></i></a>
+    <h3 style="margin:0">{{ display_name }}</h3>
+    <div style="flex:1"></div>
+    <i class="fas fa-bars"></i>
 </div>
 
-<div id="chat-box">
-    {% for msg in messages %}
-    <div class="msg {% if msg.sender == session.user.name %}me{% else %}other{% endif %}">
-        {% if msg.sender != session.user.name %}
-        <div class="msg-sender">{{ msg.sender }}</div>
-        {% endif %}
-        <div class="msg-text">{{ msg.content }}</div>
-        <div class="msg-time">{{ msg.timestamp }}</div>
+<div class="kakaotalk-chat-bg">
+    <div id="chat-box">
+        {% for msg in messages %}
+        <div class="msg-wrapper {% if msg.sender == session.user.name %}me{% else %}other{% endif %}">
+            {% if msg.sender != session.user.name %}
+            <div class="msg-sender">{{ msg.sender }}</div>
+            {% endif %}
+            <div class="msg-bubble">
+                {{ msg.message }}
+            </div>
+            <div class="msg-footer">
+                <span class="msg-time">{{ msg.timestamp.split(' ')[1][:5] }}</span>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 
-<div style="display:flex">
-    <input type="text" id="msg-input" placeholder="메시지 입력..." style="margin:0; flex:1">
-    <button id="send-btn" class="btn" style="width:auto; margin-left:5px">전송</button>
+    <div class="chat-input-area">
+        <i class="far fa-plus-square" style="font-size: 1.5rem; color: #888; align-self:center;"></i>
+        <input type="text" id="msg-input" placeholder="메시지를 입력하세요">
+        <button id="send-btn"><i class="fas fa-arrow-up"></i></button>
+    </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -94,18 +144,18 @@
     }
 
     socket.on('receive_message', (data) => {
-        const div = document.createElement('div');
-        div.className = `msg ${data.sender === myName ? 'me' : 'other'}`;
+        const wrapper = document.createElement('div');
+        wrapper.className = `msg-wrapper ${data.sender === myName ? 'me' : 'other'}`;
 
         let html = '';
         if(data.sender !== myName) {
-            html += `<div class="msg-sender">${data.sender} (${data.grade})</div>`;
+            html += `<div class="msg-sender">${data.sender}</div>`;
         }
-        html += `<div class="msg-text">${data.msg}</div>`;
-        html += `<div class="msg-time">${data.timestamp}</div>`;
+        html += `<div class="msg-bubble">${data.msg}</div>`;
+        html += `<div class="msg-footer"><span class="msg-time">${data.timestamp.split(' ')[1].substring(0, 5)}</span></div>`;
 
-        div.innerHTML = html;
-        chatBox.appendChild(div);
+        wrapper.innerHTML = html;
+        chatBox.appendChild(wrapper);
         chatBox.scrollTop = chatBox.scrollHeight;
     });
 

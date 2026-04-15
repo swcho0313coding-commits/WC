@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .kakaotalk-bg {
+        background: #fdfdfd;
+        min-height: 100vh;
+    }
+    .chat-header {
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+    }
+    .tab-bar {
+        display: flex;
+        border-bottom: 1px solid #eee;
+        background: white;
+    }
+    .tab-item {
+        flex: 1;
+        text-align: center;
+        padding: 12px;
+        text-decoration: none;
+        color: #888;
+        font-weight: 500;
+    }
+    .tab-item.active {
+        color: #333;
+        border-bottom: 2px solid #333;
+    }
+    .contact-item {
+        display: flex;
+        padding: 10px 20px;
+        align-items: center;
+        border-bottom: 1px solid #f5f5f5;
+    }
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 15px;
+        background: #eee;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #666;
+    }
+    .user-info {
+        flex: 1;
+    }
+    .user-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    .user-phone {
+        font-size: 0.8rem;
+        color: #888;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="kakaotalk-bg">
+    <div class="chat-header">
+        <h2 style="margin:0">친구</h2>
+        <div style="font-size: 1.2rem;">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-user-plus" style="margin-left: 15px;"></i>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <a href="{{ url_for('chat.contacts') }}" class="tab-item {% if active_tab == 'contacts' %}active{% endif %}">
+            <i class="fas fa-user"></i>
+        </a>
+        <a href="{{ url_for('chat.index') }}" class="tab-item {% if active_tab == 'chat' %}active{% endif %}">
+            <i class="fas fa-comment"></i>
+        </a>
+        <a href="#" class="tab-item">
+            <i class="fas fa-ellipsis-h"></i>
+        </a>
+    </div>
+
+    <div class="contacts-list" style="padding-top: 10px;">
+        <div style="padding: 10px 20px; font-size: 0.8rem; color: #888;">국민 연락처</div>
+        {% for u in users %}
+        <div class="contact-item">
+            <div class="user-avatar">{{ u.name[0] }}</div>
+            <div class="user-info">
+                <div class="user-name">{{ u.name }} ({{ u.grade }})</div>
+                <div class="user-phone">{{ u.phone }}</div>
+            </div>
+            <form action="{{ url_for('chat.start_dm', target_name=u.name) }}" method="POST">
+                <button type="submit" class="btn btn-sm" style="width:auto; font-size:0.8rem; padding: 5px 12px; margin:0">채팅</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

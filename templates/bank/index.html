@@ -6,6 +6,8 @@
     <form action="{{ url_for('bank.transfer') }}" method="POST">
         <label>수취인 이름</label>
         <input type="text" name="recipient" required>
+        <label>수취인 전화번호</label>
+        <input type="text" name="phone" placeholder="예: 3#7*" required>
         <label>송금 금액</label>
         <input type="number" name="amount" min="1" required>
         <button type="submit" class="btn">송금하기</button>
@@ -30,7 +32,8 @@
         <p>만기일: {{ loan.due_date }}</p>
         <p>상태: {{ loan.status }}</p>
         {% if loan.status == 'active' %}
-        <form action="{{ url_for('bank.repay', loan_idx=loop.index0) }}" method="POST">
+        <form action="{{ url_for('bank.repay') }}" method="POST">
+            <input type="hidden" name="amount" value="{{ loan.amount }}">
             <button type="submit" class="btn btn-secondary">상환하기</button>
         </form>
         {% endif %}

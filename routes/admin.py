@@ -16,9 +16,14 @@ def index():
     complaints = CSVManager.read('data/complaints.csv')
     elections = CSVManager.read('data/elections.csv')
 
+    # Placeholder Replacement for Grades in Admin View
+    country = CSVManager.get_config('country_name')
+    for u in users:
+        u['grade'] = u['grade'].replace('{국가이름}', country)
+
     stats = {
         'user_count': len(users),
-        'treasury_balance': treasury_data[0]['balance'] if treasury_data else '0',
+        'treasury_balance': treasury_data[-1]['balance'] if treasury_data else '0',
         'active_trials': len([c for c in complaints if c['status'] == 'trial_ongoing']),
         'active_election': any(e['status'] != 'completed' for e in elections)
     }
@@ -231,7 +236,8 @@ def treasury_manage():
         flash(f"국고 {'입금' if amount > 0 else '출금'} {abs(amount)} 완료")
 
     treasury = CSVManager.read('data/treasury.csv')
-    return render_template('admin/treasury.html', balance=treasury[0]['balance'])
+    balance = treasury[-1]['balance'] if treasury else '0'
+    return render_template('admin/treasury.html', balance=balance)
 
 @admin_bp.route('/ban_management')
 @login_required
@@ -270,9 +276,17 @@ def resolve_ban(name, action):
 def award_medal():
     if request.method == 'POST':
         user_name = request.form.get('user')
+        user_phone = request.form.get('phone')
         medal_name = request.form.get('medal')
         reason = request.form.get('reason')
         reward = int(request.form.get('reward', 0))
+
+        # Verify Identity
+        users = CSVManager.read('data/users.csv')
+        recipient = next((u for u in users if u['name'] == user_name and u['phone'] == user_phone), None)
+        if not recipient:
+            flash("사용자 정보(이름/전화번호)가 일치하지 않습니다.")
+            return redirect(url_for('admin.award_medal'))
 
         new_medal = {
             'user': user_name,

@@ -2,120 +2,282 @@
 
 {% block extra_css %}
 <style>
-    .sns-post {
-        margin-bottom: 20px;
-        border: 1px solid var(--border-color);
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
+    :root {
+        --insta-bg: #fafafa;
+        --insta-border: #dbdbdb;
+        --insta-white: #ffffff;
+        --insta-gray: #8e8e8e;
     }
-    .post-header {
-        padding: 10px;
+
+    body {
+        background-color: var(--insta-bg);
+    }
+
+    .insta-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding-top: 20px;
+    }
+
+    /* Header Clone */
+    .insta-header {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 60px;
+        background: var(--insta-white);
+        border-bottom: 1px solid var(--insta-border);
         display: flex;
         align-items: center;
-        font-weight: bold;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 1001;
+        font-family: 'Billabong', cursive; /* Optional font for brand look */
+        font-size: 1.5rem;
     }
-    .post-image img {
-        width: 100%;
-        display: block;
+
+    /* Post Layout */
+    .post {
+        background: var(--insta-white);
+        border: 1px solid var(--insta-border);
+        margin-bottom: 24px;
+        border-radius: 3px;
     }
-    .post-content {
-        padding: 10px;
+
+    .post-user {
+        display: flex;
+        align-items: center;
+        padding: 14px 16px;
     }
-    .post-actions {
-        padding: 10px;
-        border-top: 1px solid #eee;
-    }
-    .post-comments {
-        padding: 10px;
-        background: #fafafa;
-        font-size: 0.9rem;
-    }
-    .comment-item {
-        margin-bottom: 5px;
-    }
-    .comment-author {
-        font-weight: bold;
-    }
-    .create-post-btn {
-        position: fixed;
-        bottom: 80px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
-        background: var(--primary-color);
-        color: white;
+        background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+        margin-right: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2rem;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        text-decoration: none;
-        z-index: 999;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: bold;
     }
+
+    .user-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .post-image-container {
+        width: 100%;
+        background: #efefef;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .post-image-container img {
+        width: 100%;
+        display: block;
+    }
+
+    .post-actions {
+        padding: 12px 16px;
+        display: flex;
+        gap: 16px;
+        font-size: 1.5rem;
+    }
+
+    .post-likes {
+        padding: 0 16px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .post-caption {
+        padding: 0 16px;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .post-caption .user-name {
+        margin-right: 8px;
+    }
+
+    .post-comments-view {
+        padding: 0 16px;
+        font-size: 0.85rem;
+        color: var(--insta-gray);
+        cursor: pointer;
+        margin-bottom: 8px;
+    }
+
+    .comment-list {
+        padding: 0 16px;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .comment-item {
+        margin-bottom: 4px;
+    }
+
+    .post-time {
+        padding: 0 16px;
+        font-size: 0.7rem;
+        color: var(--insta-gray);
+        text-transform: uppercase;
+        margin-bottom: 16px;
+    }
+
+    .comment-form {
+        border-top: 1px solid var(--insta-border);
+        padding: 12px 16px;
+        display: flex;
+    }
+
+    .comment-form input {
+        border: none;
+        flex: 1;
+        outline: none;
+        font-size: 0.9rem;
+        padding: 0;
+        margin: 0;
+    }
+
+    .comment-form button {
+        background: none;
+        border: none;
+        color: #0095f6;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* Floating Action */
+    .create-trigger {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        background: #0095f6;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        font-size: 24px;
+        z-index: 1000;
+        text-decoration: none;
+    }
+
     #postModal {
         display: none;
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0,0,0,0.6);
         z-index: 2000;
         align-items: center;
         justify-content: center;
+    }
+
+    .modal-content {
+        background: white;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #eee;
+        padding: 15px;
+        text-align: center;
+        font-weight: 600;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<h2>{{ config_country_name }} 소셜 네트워크</h2>
-
-<a href="#" class="create-post-btn" onclick="document.getElementById('postModal').style.display='flex'">+</a>
-
-<div id="postModal">
-    <div class="card" style="width: 90%; max-width: 400px;">
-        <h3>새 게시물 작성</h3>
-        <form action="{{ url_for('sns.create_post') }}" method="POST" enctype="multipart/form-data">
-            <textarea name="content" placeholder="무슨 생각을 하고 계신가요?" required></textarea>
-            <input type="file" name="file" accept="image/*">
-            <button type="submit" class="btn">게시</button>
-            <button type="button" class="btn btn-secondary" style="margin-top:5px" onclick="document.getElementById('postModal').style.display='none'">취소</button>
-        </form>
-    </div>
-</div>
-
-{% for post in posts %}
-<div class="sns-post">
-    <div class="post-header">
-        {{ post.user }} ({{ post.grade }})
-    </div>
-    {% if post.image %}
-    <div class="post-image">
-        <img src="{{ url_for('static', filename=post.image) }}" alt="Post image">
-    </div>
-    {% endif %}
-    <div class="post-content">
-        {{ post.content }}
-    </div>
-    <div class="post-actions">
-        <a href="{{ url_for('sns.like', post_id=post.id) }}" style="text-decoration:none">
-             ❤️ {{ post.likes }}
-        </a>
-    </div>
-
-    <div class="post-comments">
-        {% for comment in post.comments %}
-        <div class="comment-item">
-            <span class="comment-author">{{ comment.user }} ({{ comment.grade }}):</span>
-            {{ comment.content }}
+<div class="insta-container">
+    <!-- Instagram Stories Placeholder -->
+    <div style="display:flex; overflow-x: auto; padding: 10px 0; margin-bottom: 20px; gap: 15px; border-bottom: 1px solid var(--insta-border);">
+        <div style="display:flex; flex-direction:column; align-items:center; min-width: 66px;">
+            <div class="user-avatar" style="width: 56px; height: 56px;">Me</div>
+            <span style="font-size: 0.7rem; margin-top: 5px;">내 스토리</span>
+        </div>
+        {% for i in range(5) %}
+        <div style="display:flex; flex-direction:column; align-items:center; min-width: 66px;">
+            <div class="user-avatar" style="width: 56px; height: 56px;">U{{i}}</div>
+            <span style="font-size: 0.7rem; margin-top: 5px;">사용자{{i}}</span>
         </div>
         {% endfor %}
+    </div>
 
-        <form action="{{ url_for('sns.comment', post_id=post.id) }}" method="POST" style="margin-top:10px; display:flex; gap:5px;">
-            <input type="text" name="content" placeholder="댓글을 입력하세요..." required style="flex:1; font-size:0.8rem;">
-            <button type="submit" class="btn btn-sm" style="padding: 2px 8px;">등록</button>
+    {% for post in posts %}
+    <div class="post">
+        <div class="post-user">
+            <div class="user-avatar">{{ post.user[0] }}</div>
+            <div class="user-name">{{ post.user }} ({{ post.grade }})</div>
+        </div>
+
+        <div class="post-image-container">
+            {% if post.image %}
+            <img src="{{ url_for('static', filename=post.image) }}" alt="Post Content">
+            {% else %}
+            <div style="color:#aaa; font-style:italic;">텍스트 게시물</div>
+            {% endif %}
+        </div>
+
+        <div class="post-actions">
+            <a href="{{ url_for('sns.like', post_id=post.id) }}" style="text-decoration:none; color:black;">
+                {% if post.is_liked %}❤️{% else %}🤍{% endif %}
+            </a>
+            <span>💬</span>
+            <span>✈️</span>
+        </div>
+
+        <div class="post-likes">좋아요 {{ post.likes }}개</div>
+
+        <div class="post-caption">
+            <span class="user-name">{{ post.user }}</span>
+            {{ post.content }}
+        </div>
+
+        <div class="comment-list">
+            {% for comment in post.comments %}
+            <div class="comment-item">
+                <span class="user-name" style="font-size: 0.8rem;">{{ comment.user }}</span>
+                <span style="font-size: 0.8rem;">{{ comment.content }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="post-time">{{ post.timestamp }}</div>
+
+        <form action="{{ url_for('sns.comment', post_id=post.id) }}" method="POST" class="comment-form">
+            <input type="text" name="content" placeholder="댓글 달기..." required>
+            <button type="submit">게시</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+<a href="#" class="create-trigger" onclick="document.getElementById('postModal').style.display='flex'">+</a>
+
+<div id="postModal" onclick="if(event.target == this) this.style.display='none'">
+    <div class="modal-content">
+        <div class="modal-header">새 게시물 만들기</div>
+        <form action="{{ url_for('sns.create_post') }}" method="POST" enctype="multipart/form-data" style="padding: 20px;">
+            <textarea name="content" placeholder="문구 입력..." style="width:100%; border:none; resize:none; min-height:100px; outline:none;" required></textarea>
+            <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+            <label style="font-size: 0.9rem; color: #888;">사진 추가</label>
+            <input type="file" name="file" accept="image/*" style="margin-top: 5px;">
+            <button type="submit" class="btn" style="margin-top: 20px; background:#0095f6;">공유하기</button>
         </form>
     </div>
 </div>
-{% endfor %}
-
 {% endblock %}

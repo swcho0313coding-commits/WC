@@ -58,7 +58,7 @@ class EconomyService:
         tax_map = {t['grade']: float(t['tax_rate']) for t in taxes}
 
         treasury = CSVManager.read('data/treasury.csv')
-        current_treasury = int(treasury[0]['balance'])
+        current_treasury = int(treasury[-1]['balance']) if treasury else 0
         tax_total = 0
 
         for u in users:
@@ -94,10 +94,15 @@ class EconomyService:
     @staticmethod
     def update_treasury(amount_change, reason):
         rows = CSVManager.read('data/treasury.csv')
-        current_balance = int(rows[0]['balance'])
+        current_balance = int(rows[-1]['balance']) if rows else 0
         new_balance = current_balance + amount_change
-        rows[0]['balance'] = str(new_balance)
-        rows[0]['last_updated'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        CSVManager.write('data/treasury.csv', rows, ['balance', 'last_updated'])
-        # Optional: log treasury transactions
+
+        new_row = {
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'type': 'deposit' if amount_change > 0 else 'expense',
+            'amount': str(abs(amount_change)),
+            'balance': str(new_balance),
+            'reason': reason
+        }
+        CSVManager.append('data/treasury.csv', new_row, ['timestamp', 'type', 'amount', 'balance', 'reason'])
         return new_balance

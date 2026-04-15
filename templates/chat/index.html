@@ -1,12 +1,129 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+    .kakaotalk-bg {
+        background: #fdfdfd;
+        min-height: 100vh;
+    }
+    .chat-header {
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+    }
+    .tab-bar {
+        display: flex;
+        border-bottom: 1px solid #eee;
+        background: white;
+    }
+    .tab-item {
+        flex: 1;
+        text-align: center;
+        padding: 12px;
+        text-decoration: none;
+        color: #888;
+        font-weight: 500;
+    }
+    .tab-item.active {
+        color: #333;
+        border-bottom: 2px solid #333;
+    }
+    .chat-item {
+        display: flex;
+        padding: 12px 20px;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+        border-bottom: 1px solid #f5f5f5;
+    }
+    .chat-item:active {
+        background: #f0f0f0;
+    }
+    .room-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 18px;
+        background: #ccc;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        font-size: 1.2rem;
+    }
+    .room-info {
+        flex: 1;
+    }
+    .room-name {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 2px;
+    }
+    .room-last-msg {
+        font-size: 0.85rem;
+        color: #888;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+    }
+    .room-meta {
+        text-align: right;
+        font-size: 0.75rem;
+        color: #aaa;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h2>채팅방 목록</h2>
-{% for room in rooms %}
-<a href="{{ url_for('chat.room', room_id=room.room_id) }}" class="card" style="display:block; text-decoration:none; color:inherit;">
-    <div style="font-weight:bold; font-size:1.1rem">{{ room.name }}</div>
-    <div style="color:#666; font-size:0.9rem; margin-top:5px">{{ room.last_message or '대화 없음' }}</div>
-    <div style="color:#999; font-size:0.8rem; text-align:right">{{ room.timestamp }}</div>
-</a>
-{% endfor %}
+<div class="kakaotalk-bg">
+    <div class="chat-header">
+        <h2 style="margin:0">채팅</h2>
+        <div style="font-size: 1.2rem;">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-comment-medical" style="margin-left: 15px;"></i>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <a href="{{ url_for('chat.contacts') }}" class="tab-item {% if active_tab == 'contacts' %}active{% endif %}">
+            <i class="fas fa-user"></i>
+        </a>
+        <a href="{{ url_for('chat.index') }}" class="tab-item {% if active_tab == 'chat' %}active{% endif %}">
+            <i class="fas fa-comment"></i>
+        </a>
+        <a href="#" class="tab-item">
+            <i class="fas fa-ellipsis-h"></i>
+        </a>
+    </div>
+
+    <div class="rooms-list">
+        {% for room in rooms %}
+        <a href="{{ url_for('chat.room', room_id=room.room_id) }}" class="chat-item">
+            <div class="room-avatar" style="background: {% if room.type == 'global' %}#0056b3{% else %}#ffcc00{% endif %};">
+                {{ room.name[0] }}
+            </div>
+            <div class="room-info">
+                <div class="room-name">{{ room.name }}</div>
+                <div class="room-last-msg">{{ room.last_message }}</div>
+            </div>
+            <div class="room-meta">
+                <div>{{ room.timestamp.split(' ')[0] }}</div>
+                {% if room.unread_count %}
+                <div style="background:#ff4d4d; color:white; border-radius:10px; padding:2px 6px; display:inline-block; margin-top:5px">{{ room.unread_count }}</div>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+
+        {% if not rooms %}
+        <div style="text-align:center; padding: 50px; color: #aaa;">
+            <p>참여 중인 대화방이 없습니다.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

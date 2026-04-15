@@ -18,10 +18,11 @@
             </thead>
             <tbody>
                 {% for row in data %}
+                {% set outer_loop = loop %}
                 <tr>
                     {% for h in headers %}
                     <td style="border:1px solid #ddd; padding:0">
-                        <input type="text" name="cell_{{ loop.parent.index0 }}_{{ h }}" value="{{ row[h] }}" style="border:none; width:100%; padding:8px; margin:0">
+                        <input type="text" name="cell_{{ outer_loop.index0 }}_{{ h }}" value="{{ row[h] }}" style="border:none; width:100%; padding:8px; margin:0">
                     </td>
                     {% endfor %}
                 </tr>

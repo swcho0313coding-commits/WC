@@ -60,15 +60,28 @@ def check_requirements():
     if request.path.startswith('/static') or request.path.startswith('/auth'):
         return
 
+    # 1. IP Block Check
     ip = request.remote_addr
     blocks = CSVManager.read('data/ip_blocks.csv')
-    for b in blocks:
-        if b['ip'] == ip:
-            return f"접속이 차단되었습니다. 사유: {b['reason']}", 403
+    if any(b['ip'] == ip for b in blocks):
+        reason = next((b['reason'] for b in blocks if b['ip'] == ip), "관리자에 의해 차단된 IP입니다.")
+        return f"접속이 차단되었습니다. 사유: {reason}", 403
 
+    # 2. Session Validation & Status Check
     if 'user' in session:
-        # 3월 1일 이후 첫 로그인 시 정보 수정 강제
-        if check_grade_update_needed(session['user']):
+        users = CSVManager.read('data/users.csv')
+        user = next((u for u in users if u['login_id'] == session['user']['login_id']), None)
+
+        if not user or user['status'] in ['banned', 'deleted']:
+            session.pop('user', None)
+            flash("세션이 만료되었거나 계정이 비활성화되었습니다.")
+            return redirect(url_for('auth.login'))
+
+        # Sync session with DB (CSV)
+        session['user'] = user
+
+        # 3. Mandatory Info Update Check (March 1st)
+        if check_grade_update_needed(user):
             if not request.path.startswith('/mypage/update_info'):
                 flash("3월 1일 새 학기를 맞아 학년/반 정보를 갱신해야 합니다.")
                 return redirect(url_for('mypage.update_info'))

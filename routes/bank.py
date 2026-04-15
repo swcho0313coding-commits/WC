@@ -23,10 +23,19 @@ def index():
 @login_required
 def transfer():
     recipient_name = request.form.get('recipient')
+    recipient_phone = request.form.get('phone')
     amount = int(request.form.get('amount'))
 
     if amount <= 0:
         flash("유효하지 않은 금액입니다.")
+        return redirect(url_for('bank.index'))
+
+    # Verify Recipient Identity
+    users = CSVManager.read('data/users.csv')
+    recipient = next((u for u in users if u['name'] == recipient_name and u['phone'] == recipient_phone), None)
+
+    if not recipient:
+        flash("수취인 정보(이름/전화번호)가 일치하지 않습니다.")
         return redirect(url_for('bank.index'))
 
     sender_name = session['user']['name']
@@ -34,7 +43,7 @@ def transfer():
         flash("본인에게 송금할 수 없습니다.")
         return redirect(url_for('bank.index'))
 
-    success, msg = EconomyService.update_user_assets(sender_name, -amount, f"{recipient_name}에게 송금")
+    success, msg = EconomyService.update_user_assets(sender_name, -amount, f"{recipient_name}({recipient_phone})에게 송금")
     if success:
         EconomyService.update_user_assets(recipient_name, amount, f"{sender_name}로부터 송금")
         flash(f"{recipient_name}님께 {amount} {CSVManager.get_config('currency_name')}을 송금했습니다.")
@@ -73,7 +82,12 @@ def apply_loan():
 @bank_bp.route('/repay', methods=['POST'])
 @login_required
 def repay():
-    amount = int(request.form.get('amount'))
+    val = request.form.get('amount')
+    if not val:
+        flash("상환 금액을 입력하세요.")
+        return redirect(url_for('bank.index'))
+
+    amount = int(val)
     user_name = session['user']['name']
 
     success, msg = EconomyService.update_user_assets(user_name, -amount, "대출금 상환")

@@ -1,0 +1,70 @@
+[AI REPLICATION PROMPT: VIRTUAL STATE MANAGEMENT SYSTEM]
+
+Role: Expert Full-stack Python Flask Developer
+Task: Create a comprehensive Virtual State Management System with 100% CSV persistence.
+
+### 1. CORE TECHNICAL STACK & RULES
+- Framework: Python Flask (Full-stack)
+- Real-time: Flask-SocketIO
+- Automation: APScheduler (Background jobs for economy/elections)
+- Database: PROHIBITED (Use strictly CSV files for all permanent data)
+- Thread Safety: Use threading.Lock for all CSV write operations.
+- Security: No encryption needed (plain text storage).
+- Hardcoding: FORBIDDEN. All values (Country Name, Currency, Grades, Salaries) must be loaded from CSV and supports real-time updates. Use placeholders like {국가이름} and {화폐단위} in templates/statutes.
+
+### 2. UI/UX DESIGN (Mobile-friendly)
+- Theme: Modern, professional Blue-themed Government Agency style.
+- Navigation: Bottom navigation bar for mobile usability.
+- SNS: Instagram-clone UI (Profile avatars, Feed, Likes, Comments, Image uploads).
+- Chat: KakaoTalk-clone UI (Contact list, Chat room list, DM/Group chats, Yellow speech bubbles).
+- Header: Display Country Name and National Motto from config.
+
+### 3. MODULE SPECIFICATIONS
+
+#### A. Identity & Auth
+- Resident ID: Generated as [Prefix]-[SchoolCode]-[Grade/Class]-[NameHash].
+- ID Card: Generate .png image with user info and an embedded QR code using Pillow.
+- QR Scanner: Functionality to scan ID card QR and show data based on scanner's permission.
+- Annual Reset: Force school info update for all users every March 1st.
+
+#### B. Economic System
+- Automated Payroll/Taxes: Background task to pay salaries and collect taxes weekly.
+- Treasury: Manage national funds. All taxes/fines flow here. Manual budget execution by Admin.
+- Banking:
+  - Money Transfer: MUST verify both Recipient Name and Phone Number to prevent duplicates.
+  - Loans: Credit score based lending and repayment.
+
+#### C. Politics & Law
+- Election: 3-week cycle (Registration -> Confirmation -> Voting -> Counting). Automatic phase transitions.
+- Legislative: Admins/Legislative rank can propose laws. Final approval by President/Admin creates a .txt file in the laws directory.
+- Parties: Creation requests, member management, and seat counts.
+
+#### D. Judicial System
+- 3-tier Trial:
+  1. Primary Court (Grade 1 Judicial)
+  2. AI Appeal (Generates a specific prompt for Admin to process)
+  3. High Council (Admin/President final verdict)
+- Penalties: Log in penalties.csv. Auto-ban (status=banned) at 200 points.
+
+#### E. Social Features
+- SNS: Grade-based priority (higher grades appear first in feed). Support for text+image.
+- Chat: Real-time via SocketIO. Word filter and flood protection. DM creation from Contact list.
+
+#### F. Entertainment (Games)
+- Multiplayer Dice Battle: Real-time SocketIO betting between users.
+- National Lottery: Weekly automated draw funded by Treasury.
+- Casino: Slots, Blackjack (with Dealer AI), Gacha (configurable probabilities), RPS, Hilo, Roulette.
+
+#### G. Administrative Panel
+- Live CSV Editor: Web UI to edit all CSV files like a table.
+- Law Editor: Text-area editor for statutes.
+- Emergency Control: Declare Jindogae/Martial Law. Block certain features (politics/economy) based on status.
+- User/IP Management: Approve new users, Unblock IPs, Handle penalty appeals.
+
+### 4. DATA SCHEMA (Mandatory Headers)
+- users.csv: name, login_id, password, birth, grade, phone, resident_id, school_info, assets, status, credit_score, last_update_year
+- treasury.csv: timestamp, type, amount, balance, reason
+- chat_rooms.csv: room_id, type, name, members, last_message, timestamp
+- emergency_records.csv: type, starter, timestamp, status, end_timestamp
+
+[Additional Note]: Ensure the application is robust against 'NoneType' errors and list indices. Provide feedback messages for every user action. Local/Private deployment focus.
